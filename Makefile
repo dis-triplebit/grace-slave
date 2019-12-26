@@ -1,11 +1,11 @@
 SOURCE_DIR := src
 
 # COMPILER := icc
-COMPILER := g++ -std=c++0x
+COMPILER := g++ -std=c++0x -I /home/cjgao/boost_1_71_0
 
 # release
 BINARY_DIR := bin/lrelease
-CPPFLAGS := -Wall -g -O0 -std=c++0x
+CPPFLAGS := -Wall -g -O0 -std=c++0x -I /home/cjgao/boost_1_71_0
 LIBS := -L/usr/local/lib -lboost_system -lboost_thread -lpthread 
 
 # debug

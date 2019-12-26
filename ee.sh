@@ -1,0 +1,1 @@
+export LD_LIBRARY_PATH="/usr/local/lib/:/home/cjgao/boost_1_71_0/stage/lib/:$LD_LIBRARY_PATH"
