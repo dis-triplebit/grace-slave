@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{9DAE8E57-46F1-4642-BDDA-25A118A4B672}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="buildindex\BuildBitmapIndex.cpp" />
+    <ClCompile Include="buildtriplebitfromn3\BuildTripleBit.cpp" />
+    <ClCompile Include="searchapi\searchOldDatabase.cpp" />
+    <ClCompile Include="searchapi\Server.cpp" />
+    <ClCompile Include="triplebitqueryforid\TripleBitQueryForID.cpp" />
+    <ClCompile Include="triplebitquery\TripleBitQuery.cpp" />
+    <ClCompile Include="triplebit\BitmapBuffer.cpp" />
+    <ClCompile Include="triplebit\EntityIDBuffer.cpp" />
+    <ClCompile Include="triplebit\HashIndex.cpp" />
+    <ClCompile Include="triplebit\LineHashIndex.cpp" />
+    <ClCompile Include="triplebit\MemoryBuffer.cpp" />
+    <ClCompile Include="triplebit\MessageEngine.cpp" />
+    <ClCompile Include="triplebit\MMapBuffer.cpp" />
+    <ClCompile Include="triplebit\ObjectPool.cpp" />
+    <ClCompile Include="triplebit\OSFile.cpp" />
+    <ClCompile Include="triplebit\PartitionMaster.cpp" />
+    <ClCompile Include="triplebit\PlanGenerator.cpp" />
+    <ClCompile Include="triplebit\PredicateTable.cpp" />
+    <ClCompile Include="triplebit\QuerySemanticAnalysis.cpp" />
+    <ClCompile Include="triplebit\ResultIDBuffer.cpp" />
+    <ClCompile Include="triplebit\Sorter.cpp" />
+    <ClCompile Include="triplebit\SPARQLLexer.cpp" />
+    <ClCompile Include="triplebit\SPARQLParser.cpp" />
+    <ClCompile Include="triplebit\StatisticsBuffer.cpp" />
+    <ClCompile Include="triplebit\StringIDSegment.cpp" />
+    <ClCompile Include="triplebit\SynchronousBuffer.cpp" />
+    <ClCompile Include="triplebit\TempBuffer.cpp" />
+    <ClCompile Include="triplebit\TempFile.cpp" />
+    <ClCompile Include="triplebit\TempMMapBuffer.cpp" />
+    <ClCompile Include="triplebit\ThreadPool.cpp" />
+    <ClCompile Include="triplebit\tools\Mutex.cpp" />
+    <ClCompile Include="triplebit\TripleBitBuilder.cpp" />
+    <ClCompile Include="triplebit\triplebitQueryAPI.cpp" />
+    <ClCompile Include="triplebit\TripleBitQueryGraph.cpp" />
+    <ClCompile Include="triplebit\TripleBitRepository.cpp" />
+    <ClCompile Include="triplebit\TripleBitWorker.cpp" />
+    <ClCompile Include="triplebit\TripleBitWorkerQuery.cpp" />
+    <ClCompile Include="triplebit\TurtleParser.cpp" />
+    <ClCompile Include="triplebit\URITable.cpp" />
+    <ClCompile Include="triplebit\util\BufferManager.cpp" />
+    <ClCompile Include="triplebit\util\HashJoin.cpp" />
+    <ClCompile Include="triplebit\util\PartitionBufferManager.cpp" />
+    <ClCompile Include="triplebit\util\SortMergeJoin.cpp" />
+    <ClCompile Include="triplebit\util\Timestamp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="buildindex\BuildBitmapIndex.h" />
+    <ClInclude Include="cudalib\cuEntityIDBuffer.h" />
+    <ClInclude Include="cudalib\test1.h" />
+    <ClInclude Include="cudalib\test2.h" />
+    <ClInclude Include="searchapi\Server.h" />
+    <ClInclude Include="triplebit\BitmapBuffer.h" />
+    <ClInclude Include="triplebit\CBitMap.h" />
+    <ClInclude Include="triplebit\comm\IndexForTT.h" />
+    <ClInclude Include="triplebit\comm\ResultBuffer.h" />
+    <ClInclude Include="triplebit\comm\subTaskPackage.h" />
+    <ClInclude Include="triplebit\comm\Tasks.h" />
+    <ClInclude Include="triplebit\comm\TasksQueueChunk.h" />
+    <ClInclude Include="triplebit\comm\TasksQueueWP.h" />
+    <ClInclude Include="triplebit\comm\Tools.h" />
+    <ClInclude Include="triplebit\comm\TransQueueSW.h" />
+    <ClInclude Include="triplebit\EntityIDBuffer.h" />
+    <ClInclude Include="triplebit\Hash.h" />
+    <ClInclude Include="triplebit\HashIndex.h" />
+    <ClInclude Include="triplebit\IRepository.h" />
+    <ClInclude Include="triplebit\LineHashIndex.h" />
+    <ClInclude Include="triplebit\MemoryBuffer.h" />
+    <ClInclude Include="triplebit\MessageEngine.h" />
+    <ClInclude Include="triplebit\MMapBuffer.h" />
+    <ClInclude Include="triplebit\ObjectPool.h" />
+    <ClInclude Include="triplebit\OSFile.h" />
+    <ClInclude Include="triplebit\PartitionMaster.h" />
+    <ClInclude Include="triplebit\PlanGenerator.h" />
+    <ClInclude Include="triplebit\PredicateTable.h" />
+    <ClInclude Include="triplebit\QuerySemanticAnalysis.h" />
+    <ClInclude Include="triplebit\ResultIDBuffer.h" />
+    <ClInclude Include="triplebit\Sorter.h" />
+    <ClInclude Include="triplebit\SPARQLLexer.h" />
+    <ClInclude Include="triplebit\SPARQLParser.h" />
+    <ClInclude Include="triplebit\StatisticsBuffer.h" />
+    <ClInclude Include="triplebit\StringIDSegment.h" />
+    <ClInclude Include="triplebit\SynchronousBuffer.h" />
+    <ClInclude Include="triplebit\TempBuffer.h" />
+    <ClInclude Include="triplebit\TempFile.h" />
+    <ClInclude Include="triplebit\TempMMapBuffer.h" />
+    <ClInclude Include="triplebit\ThreadPool.h" />
+    <ClInclude Include="triplebit\tools\Mutex.h" />
+    <ClInclude Include="triplebit\TripleBit.h" />
+    <ClInclude Include="triplebit\TripleBitBuilder.h" />
+    <ClInclude Include="triplebit\tripleBitQueryAPI.h" />
+    <ClInclude Include="triplebit\TripleBitQueryGraph.h" />
+    <ClInclude Include="triplebit\TripleBitRepository.h" />
+    <ClInclude Include="triplebit\TripleBitWorker.h" />
+    <ClInclude Include="triplebit\TripleBitWorkerQuery.h" />
+    <ClInclude Include="triplebit\TurtleParser.hpp" />
+    <ClInclude Include="triplebit\URITable.h" />
+    <ClInclude Include="triplebit\util\BufferManager.h" />
+    <ClInclude Include="triplebit\util\HashJoin.h" />
+    <ClInclude Include="triplebit\util\PartitionBufferManager.h" />
+    <ClInclude Include="triplebit\util\SortMergeJoin.h" />
+    <ClInclude Include="triplebit\util\Timestamp.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
