@@ -55,7 +55,7 @@ vector<unsigned int>  search(const char* queryStr)      // 查询数据库
         string queryTemp(queryStr);
         repo->execute(queryTemp);//全局变量
         repo->getResultSet(result);
-      
+      	repo->ttForResult->resumeReference();
     }
     return result;
 }

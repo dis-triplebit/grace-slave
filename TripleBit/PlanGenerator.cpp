@@ -72,24 +72,22 @@ Status PlanGenerator::generatePlan(TripleBitQueryGraph& _graph)
 	//for predicate unknown
 	// generate the selectivity for patterns and join variables;
 
-	cout<<"xxxxxxxxxxxxxxxxxxx begin of fliter!"<<endl;
+	//cout<<"xxxxxxxxxxxxxxxxxxx begin of fliter!"<<endl;
 	for(vector<TripleNode>::iterator iter = query->tripleNodes.begin(); iter != query->tripleNodes.end(); ) {
 		
 		//cout<< "Pattern size: " << query->tripleNodes.size()<<endl;
-		if(getSelectivity(iter->tripleNodeID) == 0)
-			iter = query->tripleNodes.erase(iter);			
+		//if(getSelectivity(iter->tripleNodeID) == 0)
+		//	iter = query->tripleNodes.erase(iter);			
 		
-		else
-		{
+		
 #ifdef DEBUGPLAN
 		cout << "TripleNodeID: " << iter->tripleNodeID << " Selectivity: " << getSelectivity(iter->tripleNodeID) << endl;
 #endif	
-			iter++;
-		}
-			
+		iter++;
+				
 	}
 
-	cout<<"xxxxxxxxxxxxxxxxxxx end of fliter!"<<endl;
+	//cout<<"xxxxxxxxxxxxxxxxxxx end of fliter!"<<endl;
 	
 	vector<TripleBitQueryGraph::JoinVariableNode>::iterator joinVariableIter = query->joinVariableNodes.begin();
 	map<TripleBitQueryGraph::JoinVariableNodeID,int> selectivityMap;

@@ -550,9 +550,9 @@ Status TripleBitRepository::execute(string &queryStr) {
 	cout<<"execute!"<<endl;
 	transQueSW->EnQueue(queryStr);
 	cout<<"back from enqueue"<<endl;
-	//indexForTT->wait();
-	//sleep(3);
-	cout<<"back from wait"<<endl;
+	
+	ttForResult->wait();
+	//cout<<"back from wait"<<endl;
 	return OK;
 }
 

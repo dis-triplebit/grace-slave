@@ -98,19 +98,19 @@ int Server::myRecv() {
         // TODO:收到查询语句，调用相关函数执行查询语句
         std::cout << "收到查询语句: " << buffer << std::endl;
         //返回查询到的数据
-        vector<string> rst = search(buffer);
+        vector<unsigned int> rst = search(buffer);
 	cout << "after search" << endl;
 	cout << "second after search" << endl;
         string toMaster = "";
-	if(rst.size() == 0 || rst[0] == ""){
+	if(rst.size() == 0){
 	    toMaster = "-1\nEmpty Result\n";
 	} else {
-	    if(rst.size() == 1 && rst[0] == "Empty Result"){
+	    if(rst.size() == 1 && rst[0] == 0){
 		toMaster = "-1\nEmpty Result\n";
 	    } else {
 		//toMaster = std::to_string(rst.size()) + '\n';
             	for (int i = 0; i < rst.size(); i++) {
-                    toMaster += rst[i] + '\n';
+                    toMaster += std::to_string((long long unsigned int)rst[i]) + '\n';
                 }
 	    }
 	}

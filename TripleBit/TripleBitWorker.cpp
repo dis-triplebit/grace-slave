@@ -57,7 +57,7 @@ void TripleBitWorker::Work() {
 		
 		Execute(queryString);
 		cout << "Back from TripleBitWorker::Work execute(quertString)" << endl;
-
+		/*
 		tripleBitRepo->ttForResult->completeOneTriple();
 		cout<<"After ttForResult mark a query"<<endl;
 
@@ -70,6 +70,8 @@ void TripleBitWorker::Work() {
 		cout<<"resultSet trace finished!"<<endl;
 
 		tripleBitRepo->ttForResult->resumeReference();
+		*/
+		tripleBitRepo->ttForResult->completeOneTriple();
 		delete trans;
 		cout << "TripleBitWorker::Work test4" << endl;
 	}

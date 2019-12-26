@@ -1185,18 +1185,24 @@ Status TripleBitWorkerQuery::centerJoin(){
 	cout <<"variable count:  " << this->_queryGraph->variableCount << endl;
 	cout <<"patternBitmap size:" << patternBitmap.size() << endl;
 	bool isempty = false;
+
+	set<ID>::reverse_iterator riter = tripleBitRepo->soset->rbegin();
+	max_id = *riter;
+	cout<<"the max id is: "<< *riter <<endl;
+	cout<<"the max id is: "<< max_id <<endl;
+	
 	for(int i = 1; i < patternBitmap.size(); i++){
 		TripleBitQueryGraph::JoinVariableNode* node = NULL;
 		getVariableNodeByID(node, i);
 		if(!node){
-			//CBitMap * temp = new CBitMap(1,max_id);
-			CBitMap * temp = new CBitMap(1,4294967295);  //test
+			CBitMap * temp = new CBitMap(1,max_id);
+			//CBitMap * temp = new CBitMap(1,4294967295);  //test
 			patternBitmap[i].push_back(temp);
 		}else{
 			// cout << node->appear_tpnodes.size() << endl;
 			for(int j = 0;j < node->appear_tpnodes.size();j++){
-				//CBitMap * temp = new CBitMap(1,max_id);
-				CBitMap * temp = new CBitMap(1,4294967295); //test
+				CBitMap * temp = new CBitMap(1,max_id);
+				//CBitMap * temp = new CBitMap(1,4294967295); //test
 				patternBitmap[i].push_back(temp);
 			}
 		}
@@ -1296,7 +1302,7 @@ Status TripleBitWorkerQuery::centerJoin(){
 	resultPtr->push_back(temp);
 #endif
 */
-	if((!EntityIDList.size()) | isempty)
+	if((!EntityIDList.size()) || isempty)
 	{
 		
 	#ifdef PRINT_RESULT
