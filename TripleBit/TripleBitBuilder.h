@@ -21,6 +21,7 @@ class StatisticsBuffer;
 #include <cassert>
 #include <cstring>
 #include <set>
+#include <unordered_set>
 
 #include "TurtleParser.hpp"
 #include "ThreadPool.h"
@@ -72,7 +73,7 @@ public:
 		return statBuffer[static_cast<int>(type)];
 	}
 
-	Status resolveTriples(string rawFactsFilename, TempFile& sosetFile,TempFile& psetFile);
+	Status resolveTriples(string rawFactsFilename, string sosetFile,string psetFile);
 	Status startBuildN3(string fileName);
 	bool N3Parse(istream& in, const char* name, TempFile&);
 	Status importFromMySQL(string db, string server, string username, string password);

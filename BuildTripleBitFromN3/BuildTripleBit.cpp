@@ -58,11 +58,13 @@ int main(int argc, char* argv[])
 
     //slave节点上的输入是rawFact，因此导入只需要调用resolveTriples即可
 	//TempFile rawFact(argv[1],ios::app);
-	TempFile sosetFile("./"+(string)argv[2]+"/soset",ios::trunc);
-	TempFile psetFile("./"+(string)argv[2]+"/pset",ios::trunc);
+	string sosetFileBaseName = "./" + (string)argv[2] + "/soset";
+	string psetFileBaseName = "./" + (string)argv[2] + "/pset";
+	//TempFile sosetFile("./" + (string)argv[2] + "/soset", ios::trunc);
+	//TempFile psetFile("./" + (string)argv[2] + "/pset", ios::trunc);
 	//这两个set文件里存的是所有s，p，o的id（单节点的，需要在查询时create里读进内存，然后做验证是否存在用）
 
-	builder->resolveTriples(argv[1], sosetFile,psetFile);
+	builder->resolveTriples(argv[1], sosetFileBaseName,psetFileBaseName);
 	//rawFacts.discard();子节点文件暂时不删除
 	
 	builder->endBuild();

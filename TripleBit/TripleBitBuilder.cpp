@@ -201,14 +201,13 @@ int TripleBitBuilder::compare321(const char* left, const char* right) {
 }
 
 
-Status TripleBitBuilder::resolveTriples(string rawFactsFilename, TempFile& sosetFile,TempFile& psetFile) {
+Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFile,string psetFile) {
 	cout<<"Sort by Subject"<<endl;
 	ID subjectID, objectID, predicateID;
-    set<ID>* soset=new set<ID>;
-	set<ID>* pset=new set<ID>;
-	vector<set<ID>*> sosetvector;
-	vector<set<ID>*> psetvector;
-
+    unordered_set<ID>* soset=new unordered_set<ID>();
+	unordered_set<ID>* pset=new unordered_set<ID>();
+	vector<unordered_set<ID>*> sosetvector;
+	vector<unordered_set<ID>*> psetvector;
 
 
 	ID lastSubject = 0, lastObject = 0, lastPredicate = 0;
@@ -226,9 +225,9 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, TempFile& soset
 		loadTriple(reader, subjectID, predicateID, objectID);
 		
 		//这里需要将节点中存有的s，p，o的id都存起来，以便后边查询时检查用
-		soset.insert(subjectID);
-		soset.insert(objectID);
-		pset.insert(predicateID);
+		soset->insert(subjectID);
+		soset->insert(objectID);
+		pset->insert(predicateID);
 		//按s排序和按o排序只要一个有就可以了
 
         lastSubject = subjectID; lastPredicate = predicateID; lastObject = objectID;
@@ -243,9 +242,35 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, TempFile& soset
 			loadTriple(reader, subjectID, predicateID, objectID);
 			
 			//这里需要将节点中存有的s，p，o的id都存起来，以便后边查询时检查用
-			soset.insert(subjectID);
-			soset.insert(objectID);
-			pset.insert(predicateID);
+
+			//当set存满的时候，换一个新set，将老set的指针放在setvector里边
+			if (soset->size() >= soset->max_size()-1) {
+				sosetvector.push_back(soset);
+				soset = new set<ID>();
+			}
+			if (pset->size() >= pset->max_size()-1) {
+				psetvector.push_back(pset);
+				pset = new set<ID>();
+			}
+
+			//insert的时候还要要检查setvector里边的set有没有包含该值，有的话就不insert
+			int sflag = 0, pflag = 0, oflag = 0;
+			for (int i = 0; i < sosetvector.size(); i++) {
+				if (sosetvector[i]->find(subjectID)!=sosetvector[i]->end()) {//s存在
+					sflag = 1;
+				}
+				if (sosetvector[i]->find(objectID)!=sosetvector[i]->end()) {//o存在
+					oflag = 1;
+				}
+			}
+			for (int i = 0; i < psetvector.size();i++) {
+				if (psetvector[i]->find(predicateID)!=psetvector[i]->end()) {//p存在
+					pflag = 1;
+				}
+			}
+			if(sflag==0) soset->insert(subjectID);
+			if(oflag==0) soset->insert(objectID);
+			if(pflag==0) pset->insert(predicateID);
 
             if(lastSubject == subjectID && lastPredicate == predicateID && lastObject == objectID) {
 				reader = skipIdIdId(reader);
@@ -339,21 +364,29 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, TempFile& soset
 	sortedBySubject.discard();
 	cout << "SOsort files discard success" << endl;
     //将soset和pset里的东西存到文件里(sosetFile，psetFile)
-	cout << "start store soset to file" << endl;
-	for (set<ID>::iterator i=soset.begin();i!=soset.end();i++){
-		sosetFile.writeId(*i);
+	cout << "start store soset and pset to file" << endl;
+	if (soset->size() > 0) {
+		sosetvector.push_back(soset);
 	}
-	cout << "store soset to file success" << endl;
-	cout << "start store pset to file" << endl;
-	for(set<ID>::iterator i=pset.begin();i!=pset.end();i++){
-		psetFile.writeId(*i);
+	if (pset->size() > 0) {
+		psetvector.push_back(pset);
 	}
-	cout << "store pset to file success" << endl;
-	cout << "close sosetFile" << endl;
-	sosetFile.close();
-	cout << "close sosetFile success" << endl;
-	psetFile.close();
-	cout << "close psetFile success" << endl;
+	//接下来把setvector里边的所有元素分文件存储在硬盘里
+	for (int i = 0; i < sosetvector.size();i++) {
+		TempFile sosetVectorFile(sosetFile + "-vector-" + std::to_string(i), ios::trunc);
+		for (unordered_set<ID>::iterator iter = sosetvector[i]->begin(); iter != sosetvector[i]->end();iter++) {
+			sosetVectorFile.writeId(*iter);
+		}
+		sosetVectorFile.close();
+	}
+	for (int i = 0; i < psetvector.size();i++) {
+		TempFile psetVectorFile(psetFile + "-vector-" + std::to_string(i), ios::trunc);
+		for (unordered_set<ID>::iterator iter = psetvector[i]->begin(); iter != psetvector[i]->end();iter++) {
+			psetVectorFile.writeId(*iter);
+		}
+		psetVectorFile.close();
+	}
+	cout << "store and close soset and pset success" << endl;
 	return OK;
 }
 
