@@ -42,8 +42,8 @@ TripleBitRepository::TripleBitRepository() {
 	bitmapIndexImage = NULL;
 	bitmapPredicateImage = NULL;
     
-	soset=NULL;
-	pset=NULL;
+	sosetvector=NULL;
+	psetvector=NULL;
 }
 
 TripleBitRepository::~TripleBitRepository() {
@@ -135,21 +135,25 @@ TripleBitRepository::~TripleBitRepository() {
 		delete indexForTT;
 	indexForTT = NULL;
     
-	if(soset!=NULL)
-		delete soset;
-	soset=NULL;
+	if(sosetvector!=NULL)
+		delete sosetvector;
+	sosetvector =NULL;
 
-	if(pset!=NULL)
-		delete pset;
-	pset=NULL;
+	if(psetvector!=NULL)
+		delete psetvector;
+	psetvector =NULL;
 }
 
 bool TripleBitRepository::find_pid_by_string(PID& pid, const string& str) {
 	ID temp=stoul(str);
-	if(pset->find(temp)!=pset->end()){
-		pid=temp;
-		return true;
-	}else return false;
+	for (int i = 0; i < psetvector->size();i++) {
+		if(psetvector->at(i)->find(temp)!=psetvector->at(i)->end()){
+			//当找到的时候
+			pid = temp;
+			return true;
+		}
+	}
+	return false;
 	// if (preTable->getIDByPredicate(str.c_str(), pid) != OK)
 	// 	return false;
 	// return true;
@@ -169,8 +173,10 @@ bool TripleBitRepository::find_soid_by_string(SOID& soid, const string& str) {
 	cout<<"=============find_soid_by_string str:=============="<<endl;
 	cout<<str<<endl;
 	soid=stoul(str);
-	if(soset->find(soid)==soset->end()){
-		return false;
+	for (int i = 0; i < sosetvector->size();i++) {
+		if(sosetvector->at(i)->find(soid)==sosetvector->at(i)->end()){
+			return false;
+		}
 	}
 	return true;
 	// if (UriTable->getIdByURI(str.c_str(), soid) != URI_FOUND)
@@ -190,19 +196,39 @@ bool TripleBitRepository::find_soid_by_string_update(SOID& soid, const string& s
 bool TripleBitRepository::find_string_by_pid(string& str, PID& pid) {
 	// str = preTable->getPrediacateByID(pid);
 	//同样，所有predicate也都取消id转换，为了直接使用ID的查询
-	if(pset->find(pid)!=pset->end()){
-		str=std::to_string((long long)pid);
-	}else str="";
-
-	if (str.length() == 0)
+	int flag = 0;
+	for (int i = 0; i < psetvector->size();i++) {
+		if(psetvector->at(i)->find(pid)!=psetvector->at(i)->end()){
+			//当找到的时候
+			str = std::to_string((long long)pid);
+			flag = 1;
+		}
+	}
+	if(flag==1){
+		return true;
+	}else{
+		str = "";
 		return false;
-	return true;
+	}
+
+	//if(pset->find(pid)!=pset->end()){
+	//	str=std::to_string((long long)pid);
+	//}else str="";
+
+	//if (str.length() == 0)
+	//	return false;
+	//return true;
 }
 
 bool TripleBitRepository::find_string_by_soid(string& str, SOID& soid) {
-	if(soset->find(soid)==soset->end()){
-		return false;
-	}else str=std::to_string((long long)soid);
+	for (int i = 0; i < sosetvector->size();i++){
+		if(sosetvector->at(i)->find(soid)==sosetvector->at(i)->end()){
+			return false;
+		}else{
+			str = std::to_string((long long)soid);
+			break;
+		}
+	}
 	return true;
 	// if (UriTable->getURIById(str, soid) == URI_NOT_FOUND)
 	// 	return false;
@@ -218,12 +244,29 @@ int TripleBitRepository::get_predicate_count(PID pid) {
 
 bool TripleBitRepository::lookup(const string& str, ID& id) {
 	ID temp=stoul(str);
-	if(pset->find(temp)==pset->end()){
-		if(soset->find(temp)==soset->end()){
-			return false;
-		}else id=temp;
-	}else id=temp;
-	return true;
+	for (int i = 0; i < psetvector->size();i++) {
+		if(psetvector->at(i)->find(temp)!=psetvector->at(i)->end()){
+			//当找到的时候
+			id = temp;
+			return true;
+		}
+	}
+	for (int i = 0; i < sosetvector->size();i++) {
+		if(sosetvector->at(i)->find(temp)!=sosetvector->at(i)->end()){
+			//当找到的时候
+			id = temp;
+			return true;
+		}
+	}
+	return false;
+	//if(pset->find(temp)==pset->end()){
+	//	if(soset->find(temp)==soset->end()){
+	//		//当且仅当temp在pset和soset都查不到的时候返回false
+	//		return false;
+	//	}else id=temp;
+	//}else id=temp;
+	//return true;
+
 	// if (preTable->getIDByPredicate(str.c_str(), id) != OK && UriTable->getIdByURI(str.c_str(), id) != URI_FOUND)
 	// 	return false;
 	// return true;
@@ -295,29 +338,69 @@ TripleBitRepository* TripleBitRepository::create(const string &path) {
 	repo->UriTable = URITable::load(path);//的话会return null
 	repo->preTable = PredicateTable::load(path);//失败了的话会return null
 
-	repo->soset=new set<ID>();
-	repo->pset=new set<ID>();
-	{//load soset and pset
-		MemoryMappedFile sosetFile;
-		assert(sosetFile.open(("./"+repo->dataBasePath+"soset").c_str()));
-		const char* soreader = sosetFile.getBegin(), *solimit = sosetFile.getEnd();
-		MemoryMappedFile psetFile;
-		assert(psetFile.open(("./"+repo->dataBasePath+"pset").c_str()));
-		const char* preader = psetFile.getBegin(), *plimit = psetFile.getEnd();
-		ID id;
-		while(soreader<solimit){
-			TempFile::readId(soreader,id);
-			soreader+=4;
-			repo->soset->insert(id);
+	repo->sosetvector=new vector<unordered_set<ID>*>();
+	repo->sosetvector=new vector<unordered_set<ID>*>();
+	
+	//load soset and pset
+	repo->MAX_SOID_IN_SET = 0;
+	for (int i = 0;;i++) {
+		MemoryMappedFile eachsosetFile;
+		if (eachsosetFile.open(("./"+repo->dataBasePath+"soset-vector-"+std::to_string(i)).c_str())) {
+			//对应soset-vector文件存在，因此将其读入
+			repo->sosetvector->push_back(new unordered_set<ID>());
+			const char* soreader = eachsosetFile.getBegin(), * solimit = eachsosetFile.getEnd();
+			ID id;
+			while (soreader<solimit) {
+				TempFile::readId(soreader, id);
+				soreader += 4;
+				repo->sosetvector->at(i)->insert(id);
+				if (id > repo->MAX_SOID_IN_SET) repo->MAX_SOID_IN_SET = id;
+			}
+		}else {
+			eachsosetFile.close();
+			break;
 		}
-		while(preader<plimit){
-			TempFile::readId(preader,id);
-			preader+=4;
-			repo->pset->insert(id);
-		}
-		sosetFile.close();
-		psetFile.close();
+		eachsosetFile.close();
 	}
+	for (int i = 0;;i++) {
+		MemoryMappedFile eachpsetFile;
+		if (eachpsetFile.open(("./"+repo->dataBasePath+"pset-vector-"+std::to_string(i)).c_str())) {
+			//对应pset-vector文件存在，因此读入
+			repo->psetvector->push_back(new unordered_set<ID>());
+			const char* preader = eachpsetFile.getBegin(), * plimit = eachpsetFile.getEnd();
+			ID id;
+			while(preader<plimit){
+				TempFile::readId(preader, id);
+				preader += 4;
+				repo->psetvector->at(i)->insert(id);
+			}
+		}else{
+			eachpsetFile.close();
+			break;
+		}
+		eachpsetFile.close();
+	}
+
+	//MemoryMappedFile sosetFile;
+	//assert(sosetFile.open(("./"+repo->dataBasePath+"soset").c_str()));
+	//const char* soreader = sosetFile.getBegin(), *solimit = sosetFile.getEnd();
+	//MemoryMappedFile psetFile;
+	//assert(psetFile.open(("./"+repo->dataBasePath+"pset").c_str()));
+	//const char* preader = psetFile.getBegin(), *plimit = psetFile.getEnd();
+	//ID id;
+	//while(soreader<solimit){
+	//	TempFile::readId(soreader,id);
+	//	soreader+=4;
+	//	repo->soset->insert(id);
+	//}
+	//while(preader<plimit){
+	//	TempFile::readId(preader,id);
+	//	preader+=4;
+	//	repo->pset->insert(id);
+	//}
+	//sosetFile.close();
+	//psetFile.close();
+
     // string uri;
 	// ID maxID = repo->UriTable->getMaxID();
 	// for(ID i = 1; i <= maxID; ++i){

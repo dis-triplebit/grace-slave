@@ -1123,7 +1123,16 @@ Status TripleBitWorkerQuery::predicateJoin(){
 		//preURI = preTable->getPrediacateByID(preID);
 		preURI = std::to_string((long long unsigned)(preID));
 			for (int j = 0; j < size; ++j) {
-				if (tripleBitRepo->soset->find(p[i])!=tripleBitRepo->soset->end()) {
+				int flag = 0;
+				for (int k = 0; k < tripleBitRepo->sosetvector->size();k++) {
+					if(tripleBitRepo->sosetvector->at(k)->find(p[i])!=tripleBitRepo->sosetvector->at(k)->end()){
+						//当找到的时候
+						flag = 1;
+						break;
+					}
+				}
+				if (flag==1) {
+					//当找到的时候
 					URI=std::to_string((long long unsigned)(p[i]));
 #ifdef PRINT_RESULT
 					cout << URI << " "<<preURI<<endl;
@@ -1153,7 +1162,16 @@ Status TripleBitWorkerQuery::predicateJoin(){
 		//preURI = preTable->getPrediacateByID(preID);
 		preURI = std::to_string((long long unsigned)(preID));
 			for (int j = 0; j < size; ++j) {
-				if (tripleBitRepo->soset->find(p[i])!=tripleBitRepo->soset->end()) {
+				int flag = 0;
+				for (int k = 0; k < tripleBitRepo->sosetvector->size();k++) {
+					if(tripleBitRepo->sosetvector->at(k)->find(p[i])!=tripleBitRepo->sosetvector->at(k)->end()){
+						//当找到的时候
+						flag = 1;
+						break;
+					}
+				}
+				if (flag==1) {
+					//当找到的时候
 					URI=std::to_string((long long unsigned)(p[i]));
 #ifdef PRINT_RESULT
 					cout << preURI <<" " << URI <<endl;
@@ -1186,9 +1204,9 @@ Status TripleBitWorkerQuery::centerJoin(){
 	cout <<"patternBitmap size:" << patternBitmap.size() << endl;
 	bool isempty = false;
 
-	set<ID>::reverse_iterator riter = tripleBitRepo->soset->rbegin();
-	max_id = *riter;
-	cout<<"the max id is: "<< *riter <<endl;
+	//set<ID>::reverse_iterator riter = tripleBitRepo->soset->rbegin();
+	max_id = tripleBitRepo->MAX_SOID_IN_SET;
+	//cout<<"the max id is: "<< *riter <<endl;
 	cout<<"the max id is: "<< max_id <<endl;
 	
 	for(int i = 1; i < patternBitmap.size(); i++){
@@ -1319,7 +1337,16 @@ Status TripleBitWorkerQuery::centerJoin(){
 		size_t size = EntityIDList[_query->tripleNodes[index_t].tripleNodeID]->getSize();
 		ID* p = EntityIDList[_query->tripleNodes[index_t].tripleNodeID]->getBuffer();
 		for (i = 0; i < size; ++i) {
-			if (tripleBitRepo->soset->find(p[i])!=tripleBitRepo->soset->end()) {
+			int flag = 0;
+			for (int j = 0; j < tripleBitRepo->sosetvector->size();j++) {
+				if(tripleBitRepo->sosetvector->at(j)->find(p[i])!=tripleBitRepo->sosetvector->at(j)->end()){
+					//当找到的时候
+					flag = 1;
+					break;
+				}
+			}
+			if (flag==1) {
+				//当找到的时候
 				URI=std::to_string((long long unsigned)(p[i]));
 #ifdef PRINT_RESULT
 				cout << URI << endl;
@@ -1378,7 +1405,16 @@ Status TripleBitWorkerQuery::centerJoin(){
 			int IDCount = buf->getIDCount();
 			for (i = 0; i < bufsize; i++) {
 				for (int j = 0; j < IDCount; j++) {
-					if (tripleBitRepo->soset->find(ids[i * IDCount + resultPos[j]])!=tripleBitRepo->soset->end()) {
+					int flag = 0;
+					for (int k = 0; k < tripleBitRepo->sosetvector->size();k++) {
+						if(tripleBitRepo->sosetvector->at(k)->find(ids[i * IDCount + resultPos[j]])!=tripleBitRepo->sosetvector->at(k)->end()){
+							//当找到的时候
+							flag = 1;
+							break;
+						}
+					}
+					if (flag==1) {
+						//当找到的时候
 						URI=std::to_string((long long unsigned)(ids[i * IDCount + resultPos[j]]));
 #ifdef PRINT_RESULT
 						cout << URI << " ";
@@ -1647,7 +1683,16 @@ Status TripleBitWorkerQuery::linerJoin(){
 			int IDCount = buf->getIDCount();
 			for (i = 0; i < bufsize; i++) {
 				for (int j = 0; j < IDCount; ++j) {
-					if (tripleBitRepo->soset->find(ids[i * IDCount + resultPos[j]])!=tripleBitRepo->soset->end()) {
+
+					int flag = 0;
+					for (int k = 0; k < tripleBitRepo->sosetvector->size();k++) {
+						if(tripleBitRepo->sosetvector->at(k)->find(ids[i * IDCount + resultPos[j]])!=tripleBitRepo->sosetvector->at(k)->end()){
+							//当找到的时候
+							flag = 1;
+						}
+					}
+					if (flag==1) {
+						//当找到的时候
 						URI=std::to_string((long long unsigned)(ids[i * IDCount + resultPos[j]]));
 #ifdef PRINT_RESULT
 						cout << URI << " ";

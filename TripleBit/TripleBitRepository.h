@@ -29,6 +29,8 @@ class IndexForTT;
 #include "PartitionMaster.h"
 #include "ThreadPool.h"
 #include <set>
+#include <vector>
+#include <unordered_set>
 #include "TempFile.h"
 #include "comm/IndexForTT.h"
 
@@ -67,7 +69,11 @@ private:
 public:
 	IndexForTT *ttForResult;
 	map<ID, TripleBitWorker*> tripleBitWorker;
-    set<ID> *soset,*pset;
+
+	vector<unordered_set<ID>*> *sosetvector, *psetvector;
+	ID MAX_SOID_IN_SET;
+	ID MIN_SOID_IN_SET;//未使用过，因此暂不定义，不设值
+    //set<ID> *soset,*pset;
 //	vector<boost::mutex> tasksQueueMutex;
 
 public:
