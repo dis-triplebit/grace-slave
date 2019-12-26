@@ -345,7 +345,7 @@ TripleBitRepository* TripleBitRepository::create(const string &path) {
 	repo->MAX_SOID_IN_SET = 0;
 	for (int i = 0;;i++) {
 		MemoryMappedFile eachsosetFile;
-		if (eachsosetFile.open(("./"+repo->dataBasePath+"soset-vector-"+std::to_string(i)).c_str())) {
+		if (eachsosetFile.open(("./"+repo->dataBasePath+"soset-vector-"+std::to_string((long long)i)).c_str())) {
 			//对应soset-vector文件存在，因此将其读入
 			repo->sosetvector->push_back(new unordered_set<ID>());
 			const char* soreader = eachsosetFile.getBegin(), * solimit = eachsosetFile.getEnd();
@@ -364,7 +364,7 @@ TripleBitRepository* TripleBitRepository::create(const string &path) {
 	}
 	for (int i = 0;;i++) {
 		MemoryMappedFile eachpsetFile;
-		if (eachpsetFile.open(("./"+repo->dataBasePath+"pset-vector-"+std::to_string(i)).c_str())) {
+		if (eachpsetFile.open(("./"+repo->dataBasePath+"pset-vector-"+std::to_string((long long)i)).c_str())) {
 			//对应pset-vector文件存在，因此读入
 			repo->psetvector->push_back(new unordered_set<ID>());
 			const char* preader = eachpsetFile.getBegin(), * plimit = eachpsetFile.getEnd();
