@@ -244,13 +244,13 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			//这里需要将节点中存有的s，p，o的id都存起来，以便后边查询时检查用
 
 			//当set存满的时候，换一个新set，将老set的指针放在setvector里边
-			if (soset->size() >= soset->max_size()-1) {
+			if (soset->size() >= soset->max_size()-1 ) {
 				sosetvector.push_back(soset);
-				soset = new set<ID>();
+				soset = new unordered_set<ID>();
 			}
-			if (pset->size() >= pset->max_size()-1) {
+			if (pset->size() >= soset->max_size()-1 ) {
 				psetvector.push_back(pset);
-				pset = new set<ID>();
+				pset = new unordered_set<ID>();
 			}
 
 			//insert的时候还要要检查setvector里边的set有没有包含该值，有的话就不insert
@@ -372,14 +372,14 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		psetvector.push_back(pset);
 	}
 	//接下来把setvector里边的所有元素分文件存储在硬盘里
-	for (int i = 0; i < sosetvector.size();i++) {
+	for (long long unsigned i = 0; i < sosetvector.size();i++) {
 		TempFile sosetVectorFile(sosetFile + "-vector-" + std::to_string(i), ios::trunc);
 		for (unordered_set<ID>::iterator iter = sosetvector[i]->begin(); iter != sosetvector[i]->end();iter++) {
 			sosetVectorFile.writeId(*iter);
 		}
 		sosetVectorFile.close();
 	}
-	for (int i = 0; i < psetvector.size();i++) {
+	for (long long unsigned i = 0; i < psetvector.size();i++) {
 		TempFile psetVectorFile(psetFile + "-vector-" + std::to_string(i), ios::trunc);
 		for (unordered_set<ID>::iterator iter = psetvector[i]->begin(); iter != psetvector[i]->end();iter++) {
 			psetVectorFile.writeId(*iter);
