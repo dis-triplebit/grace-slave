@@ -204,7 +204,12 @@ int TripleBitBuilder::compare321(const char* left, const char* right) {
 Status TripleBitBuilder::resolveTriples(string rawFactsFilename, TempFile& sosetFile,TempFile& psetFile) {
 	cout<<"Sort by Subject"<<endl;
 	ID subjectID, objectID, predicateID;
-    set<ID> soset,pset;
+    set<ID>* soset=new set<ID>;
+	set<ID>* pset=new set<ID>;
+	vector<set<ID>*> sosetvector;
+	vector<set<ID>*> psetvector;
+
+
 
 	ID lastSubject = 0, lastObject = 0, lastPredicate = 0;
 	unsigned count0 = 0, count1 = 0;
