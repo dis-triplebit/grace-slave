@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
-std::string getOsInfo()
+std::string getosInfo()
 {
 	FILE* fp = fopen("/proc/version", "r");
 	if (NULL == fp)
@@ -24,7 +24,7 @@ std::string getOsInfo()
 	return str;
 }
 
-std::string getCpuInfo()
+std::string getcpuInfo()
 {
 	FILE* fp = fopen("/proc/cpuinfo", "r");
 	if (NULL == fp)
@@ -43,7 +43,7 @@ std::string getCpuInfo()
 	return str;
 }
 
-std::string getMemoryInfo()
+std::string getmemoryInfo()
 {
 	FILE* fp = fopen("/proc/meminfo", "r");
 	if (NULL == fp)

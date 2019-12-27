@@ -209,9 +209,9 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	vector<unordered_set<ID>*> sosetvector;
 	vector<unordered_set<ID>*> psetvector;
 
-	string osinfo = getOsInfo();
-	string cpuinfo = getCpuInfo();
-	string memeryinfo = getMemoryInfo();
+	string osinfo = getosInfo();
+	string cpuinfo = getcpuInfo();
+	string memeryinfo = getmemoryInfo();
 	cout << "osinfo:" << endl;
 	cout << osinfo << endl;
 	cout << "-----------" << endl;
@@ -368,9 +368,9 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		cout << "close mappedinFile success" << endl;
 	}
 
-	osinfo = getOsInfo();
-	cpuinfo = getCpuInfo();
-	memeryinfo = getMemoryInfo();
+	osinfo = getosInfo();
+	cpuinfo = getcpuInfo();
+	memeryinfo = getmemoryInfo();
 	cout << "osinfo:" << endl;
 	cout << osinfo << endl;
 	cout << "-----------" << endl;
