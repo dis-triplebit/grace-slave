@@ -26,6 +26,7 @@ class StatisticsBuffer;
 #include "TurtleParser.hpp"
 #include "ThreadPool.h"
 #include "TempFile.h"
+#include "../TripleBit/tools/Systeminfo.hpp"
 
 using namespace std;
 

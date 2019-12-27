@@ -209,7 +209,18 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	vector<unordered_set<ID>*> sosetvector;
 	vector<unordered_set<ID>*> psetvector;
 
-
+	string osinfo = getOsInfo();
+	string cpuinfo = getCpuInfo();
+	string memeryinfo = getMemoryInfo();
+	cout << "osinfo:" << endl;
+	cout << osinfo << endl;
+	cout << "-----------" << endl;
+	cout << "cpuinfo:" << endl;
+	cout << cpuinfo << endl;
+	cout << "-----------" << endl;
+	cout << "memeryinfo:" << endl;
+	cout << memeryinfo << endl;
+	cout << "-----------" << endl;
 	ID lastSubject = 0, lastObject = 0, lastPredicate = 0;
 	unsigned count0 = 0, count1 = 0;
 	TempFile sortedBySubject("./SortByS"), sortedByObject("./SortByO");
@@ -356,6 +367,20 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		mappedIn.close();
 		cout << "close mappedinFile success" << endl;
 	}
+
+	osinfo = getOsInfo();
+	cpuinfo = getCpuInfo();
+	memeryinfo = getMemoryInfo();
+	cout << "osinfo:" << endl;
+	cout << osinfo << endl;
+	cout << "-----------" << endl;
+	cout << "cpuinfo:" << endl;
+	cout << cpuinfo << endl;
+	cout << "-----------" << endl;
+	cout << "memeryinfo:" << endl;
+	cout << memeryinfo << endl;
+	cout << "-----------" << endl;
+
 	cout << "start flush bitmap" << endl;
 	bitmap->flush();
 	cout << "bitmap flush success" << endl;
