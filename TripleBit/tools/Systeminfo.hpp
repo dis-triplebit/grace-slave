@@ -1,6 +1,6 @@
 
-#ifndef BUFFERMANAGER_H_
-#define BUFFERMANAGER_H_
+#ifndef SYSTEMINFO_HPP_
+#define SYSTEMINFO_HPP_
 
 #include <stdio.h>
 #include <stdlib.h>
