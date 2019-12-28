@@ -76,7 +76,7 @@ void Sorter::sort(string filename, TempFile& out, const char* (*skip)(const char
 	TempFile intermediate(out.getBaseFile());//这里的intermediate是由out又生成的一个文件，用来存当文件大小没有超过memoryLimit的最后一个分段文件
 	char* ofs = 0;
 
-	ofstream fout("sortingSystemInfo.txt");
+	ofstream fout("sortingSystemInfo.txt",ios::out);
 	int num = 0;
 	while (reader < limit) {
 		// Collect items

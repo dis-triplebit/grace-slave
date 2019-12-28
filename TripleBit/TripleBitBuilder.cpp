@@ -212,7 +212,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	unsigned count0 = 0, count1 = 0;
 	TempFile sortedBySubject("./SortByS"), sortedByObject("./SortByO");
 
-	ofstream fout("resolvingSystemInfo.txt");
+	ofstream fout("resolvingSystemInfo.txt",ios::out);
 
 	fout << "sort before" << endl;
 	fout << getMemoryInfo() << endl;
