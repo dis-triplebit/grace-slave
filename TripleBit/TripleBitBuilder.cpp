@@ -202,30 +202,30 @@ int TripleBitBuilder::compare321(const char* left, const char* right) {
 
 
 Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFile,string psetFile) {
-	cout<<"Sort by Subject"<<endl;
+	
 	ID subjectID, objectID, predicateID;
     unordered_set<ID>* soset=new unordered_set<ID>();
 	unordered_set<ID>* pset=new unordered_set<ID>();
 	vector<unordered_set<ID>*> sosetvector;
 	vector<unordered_set<ID>*> psetvector;
-
-	string osinfo = getosInfo();
-	string cpuinfo = getcpuInfo();
-	string memeryinfo = getmemoryInfo();
-	cout << "osinfo:" << endl;
-	cout << osinfo << endl;
-	cout << "-----------" << endl;
-	cout << "cpuinfo:" << endl;
-	cout << cpuinfo << endl;
-	cout << "-----------" << endl;
-	cout << "memeryinfo:" << endl;
-	cout << memeryinfo << endl;
-	cout << "-----------" << endl;
 	ID lastSubject = 0, lastObject = 0, lastPredicate = 0;
 	unsigned count0 = 0, count1 = 0;
 	TempFile sortedBySubject("./SortByS"), sortedByObject("./SortByO");
+
+	ofstream fout("resolvingSystemInfo.txt");
+
+	fout << "sort before" << endl;
+	fout << getMemoryInfo() << endl;
+	fout << "---------------------------------" << endl;
+
+	cout << "Sort by Subject" << endl;
 	Sorter::sort(rawFactsFilename, sortedBySubject, skipIdIdId, compare123);
 	cout << "subject sort end" << endl;
+
+	fout << "sort end" << endl;
+	fout << getMemoryInfo() << endl;
+	fout << "---------------------------------" << endl;
+
 	{
 		//insert into chunk
 		sortedBySubject.close();
@@ -368,18 +368,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		cout << "close mappedinFile success" << endl;
 	}
 
-	osinfo = getosInfo();
-	cpuinfo = getcpuInfo();
-	memeryinfo = getmemoryInfo();
-	cout << "osinfo:" << endl;
-	cout << osinfo << endl;
-	cout << "-----------" << endl;
-	cout << "cpuinfo:" << endl;
-	cout << cpuinfo << endl;
-	cout << "-----------" << endl;
-	cout << "memeryinfo:" << endl;
-	cout << memeryinfo << endl;
-	cout << "-----------" << endl;
+
 
 	cout << "start flush bitmap" << endl;
 	bitmap->flush();

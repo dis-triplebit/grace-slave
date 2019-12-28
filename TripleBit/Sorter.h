@@ -6,6 +6,8 @@
 #ifndef SORTER_H
 #define SORTER_H
 #include<iostream>
+#include <fstream>
+#include "tools/Systeminfo.h"
 class TempFile;
 
 /// Sort a temporary file

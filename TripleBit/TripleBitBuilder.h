@@ -22,11 +22,12 @@ class StatisticsBuffer;
 #include <cstring>
 #include <set>
 #include <unordered_set>
+#include <fstream>
 
 #include "TurtleParser.hpp"
 #include "ThreadPool.h"
 #include "TempFile.h"
-#include "../TripleBit/tools/Systeminfo.hpp"
+#include "tools/Systeminfo.h"
 
 using namespace std;
 
