@@ -14,6 +14,6 @@ class TempFile;
 class Sorter {
    public:
    /// Sort a file
-   static void sort(std::string filename,TempFile& out,const char* (*skip)(const char*),int (*compare)(const char*,const char*),bool eliminateDuplicates=false);
+   static void sort(std::string logfilename,std::string filename,TempFile& out,const char* (*skip)(const char*),int (*compare)(const char*,const char*),bool eliminateDuplicates=false);
 };
 #endif /*SOTER_H*/

@@ -219,7 +219,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	fout << "---------------------------------" << endl;
 
 	cout << "Sort by Subject" << endl;
-	Sorter::sort(rawFactsFilename, sortedBySubject, skipIdIdId, compare123);
+	Sorter::sort("subjectSortingSystemInfo.txt",rawFactsFilename, sortedBySubject, skipIdIdId, compare123);
 	cout << "subject sort end" << endl;
 
 	fout << "sort subject end" << endl;
@@ -259,7 +259,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 				sosetvector.push_back(soset);
 				soset = new unordered_set<ID>();
 			}
-			if (pset->size() >= soset->max_size()-1 ) {
+			if (pset->size() >= pset->max_size()-1 ) {
 				psetvector.push_back(pset);
 				pset = new unordered_set<ID>();
 			}
@@ -328,9 +328,19 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	bitmap->flush();
 	cout << "bitmap flush success" << endl;
 	//sort
+
+	fout << "sort object before" << endl;
+	fout << getMemoryInfo();
+	fout << "---------------------------------" << endl;
+
 	cerr << "Sort by Object" << endl;
-	Sorter::sort(rawFactsFilename, sortedByObject, skipIdIdId, compare321);
+	Sorter::sort("objectSortingSystemInfo.txt",rawFactsFilename, sortedByObject, skipIdIdId, compare321);
 	cout << "object sort end" << endl;
+
+	fout << "sort object end" << endl;
+	fout << getMemoryInfo();
+	fout << "---------------------------------" << endl;
+
 	num = 1;
 	{
 		//insert into chunk
@@ -368,10 +378,11 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 				lastPredicate = predicateID;
 				count0++; count1 = 1;
 			} else {
-				lastSubject = subjectID;
 				count0++; count1++;
+				lastSubject = subjectID;
 			}
-			reader = skipIdIdId(reader);
+
+			reader = reader + 12;
 			v = generateXY(objectID, subjectID);
 			// 1 indicate the triple is sorted by objects' id;
 			bitmap->insertTriple(predicateID, objectID, subjectID, v, 1);
@@ -382,10 +393,9 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 				fout << getMemoryInfo();
 				fout << "-------------------------------------" << endl;
 			}
-
 		}
 
-		fout << num << " triples insert S bitmap success" << endl;
+		fout << num << " triples insert O bitmap success" << endl;
 		fout << getMemoryInfo();
 		fout << "-------------------------------------" << endl;
 
@@ -398,8 +408,8 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	bitmap->flush();
 	cout << "bitmap flush success" << endl;
 	cout << "start discard SOsort files" << endl;
-	sortedByObject.discard();
-	sortedBySubject.discard();
+	//sortedByObject.discard();
+	//sortedBySubject.discard();
 	cout << "SOsort files discard success" << endl;
     //将soset和pset里的东西存到文件里(sosetFile，psetFile)
 	cout << "start store soset and pset to file" << endl;

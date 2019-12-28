@@ -61,7 +61,7 @@ static char* spool(char* ofs, TempFile& out, const vector<Range>& items, bool el
 //---------------------------------------------------------------------------
 }
 //---------------------------------------------------------------------------
-void Sorter::sort(string filename, TempFile& out, const char* (*skip)(const char*), int(*compare)(const char*, const char*), bool eliminateDuplicates)
+void Sorter::sort(string logfilename, string filename, TempFile& out, const char* (*skip)(const char*), int(*compare)(const char*, const char*), bool eliminateDuplicates)
 // Sort a temporary file
 {
 	// Open the input
@@ -76,7 +76,7 @@ void Sorter::sort(string filename, TempFile& out, const char* (*skip)(const char
 	TempFile intermediate(out.getBaseFile());//这里的intermediate是由out又生成的一个文件，用来存当文件大小没有超过memoryLimit的最后一个分段文件
 	char* ofs = 0;
 
-	ofstream fout("sortingSystemInfo.txt",ios::out);
+	ofstream fout(logfilename,ios::out);
 	int num = 0;
 	while (reader < limit) {
 		// Collect items
