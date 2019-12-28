@@ -3,8 +3,9 @@
 #define _SYSTEMINFO_H_
 
 #include <iostream>
+#include <cstdio>
 #include <cstdlib>
-#include <string>
+#include <cstring>
 using namespace std;
 
 
@@ -26,7 +27,7 @@ using namespace std;
 //	return str;
 //}
 
-static std::string getCpuInfo()
+static string getCpuInfo()
 {
 	FILE* fp = fopen("/proc/cpuinfo", "r");
 	if (NULL == fp)
@@ -45,7 +46,7 @@ static std::string getCpuInfo()
 	return str;
 }
 
-static std::string getMemoryInfo()
+static string getMemoryInfo()
 {
 	FILE* fp = fopen("/proc/meminfo", "r");
 	if (NULL == fp)
