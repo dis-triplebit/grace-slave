@@ -416,8 +416,8 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	bitmap->flush();
 	cout << "bitmap flush success" << endl;
 	cout << "start discard SOsort files" << endl;
-	//sortedByObject.discard();
-	//sortedBySubject.discard();
+	sortedByObject.discard();
+	sortedBySubject.discard();
 	cout << "SOsort files discard success" << endl;
     //将soset和pset里的东西存到文件里(sosetFile，psetFile)
 	cout << "start store soset and pset to file" << endl;
