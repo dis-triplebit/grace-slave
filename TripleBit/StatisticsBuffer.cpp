@@ -1008,9 +1008,9 @@ int TwoConstantStatisticsBuffer::findPredicate(unsigned value1,Triple*pos,Triple
 		if (pos[mid].value1 == value1)
 			return mid; //查找成功返回
 		if (pos[mid].value1 > value1)
-			high = mid - 1; //继续在R[low..mid-1]中查扄1�7
+			high = mid - 1; //继续在R[low..mid-1]中查�??
 		else
-			low = mid + 1; //继续在R[mid+1..high]中查扄1�7
+			low = mid + 1; //继续在R[mid+1..high]中查�??
 	}
 	return -1; //当low>high时表示查找区间为空，查找失败
 

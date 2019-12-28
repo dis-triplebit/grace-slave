@@ -214,18 +214,18 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 
 	ofstream fout("resolvingSystemInfo.txt",ios::out);
 
-	fout << "sort before" << endl;
-	fout << getMemoryInfo() << endl;
+	fout << "sort subject before" << endl;
+	fout << getMemoryInfo();
 	fout << "---------------------------------" << endl;
 
 	cout << "Sort by Subject" << endl;
 	Sorter::sort(rawFactsFilename, sortedBySubject, skipIdIdId, compare123);
 	cout << "subject sort end" << endl;
 
-	fout << "sort end" << endl;
-	fout << getMemoryInfo() << endl;
+	fout << "sort subject end" << endl;
+	fout << getMemoryInfo();
 	fout << "---------------------------------" << endl;
-
+	long long num = 1;
 	{
 		//insert into chunk
 		sortedBySubject.close();
@@ -248,7 +248,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		count0 = count1 = 1;
 		
 		cout << "start insertTriple , firstTriple insert success" << endl;
-
+		
 		while (reader < limit) {
 			loadTriple(reader, subjectID, predicateID, objectID);
 			
@@ -307,7 +307,19 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			v = generateXY(subjectID, objectID);
 			//0 indicate the triple is sorted by subjects' id;
 			bitmap->insertTriple(predicateID, subjectID, objectID, v, 0);
+
+			num++;//调试信息
+			if(num%50000000==0){
+				fout << num << " triples insert S bitmap success" << endl;
+				fout << getMemoryInfo();
+				fout << "-------------------------------------" << endl;
+			}
 		}
+
+		fout << num << " triples insert S bitmap success" << endl;
+		fout << getMemoryInfo();
+		fout << "-------------------------------------" << endl;
+
 		cout << "insertTriple end , start close mappedinFile" << endl;
 		mappedIn.close();
 		cout << "close mappedinFile success" << endl;
@@ -319,6 +331,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 	cerr << "Sort by Object" << endl;
 	Sorter::sort(rawFactsFilename, sortedByObject, skipIdIdId, compare321);
 	cout << "object sort end" << endl;
+	num = 1;
 	{
 		//insert into chunk
 		sortedByObject.close();
@@ -362,13 +375,24 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			v = generateXY(objectID, subjectID);
 			// 1 indicate the triple is sorted by objects' id;
 			bitmap->insertTriple(predicateID, objectID, subjectID, v, 1);
+
+			num++;//调试信息
+			if (num % 50000000 == 0) {
+				fout << num << " triples insert O bitmap success" << endl;
+				fout << getMemoryInfo();
+				fout << "-------------------------------------" << endl;
+			}
+
 		}
+
+		fout << num << " triples insert S bitmap success" << endl;
+		fout << getMemoryInfo();
+		fout << "-------------------------------------" << endl;
+
 		cout << "insertTriple end , start close mappedinFile" << endl;
 		mappedIn.close();
 		cout << "close mappedinFile success" << endl;
 	}
-
-
 
 	cout << "start flush bitmap" << endl;
 	bitmap->flush();
@@ -401,6 +425,12 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 		psetVectorFile.close();
 	}
 	cout << "store and close soset and pset success" << endl;
+
+	fout << "resolve end" << endl;
+	fout << getMemoryInfo();
+	fout << "------------------------------" << endl;
+
+
 	return OK;
 }
 
