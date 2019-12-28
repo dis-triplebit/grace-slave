@@ -5,7 +5,7 @@ COMPILER := g++ -std=c++0x #-I /home/cjgao/boost_1_71_0
 
 # release
 BINARY_DIR := bin/lrelease
-CPPFLAGS := -Wall -g -O0 -std=c++0x #-I /home/cjgao/boost_1_71_0
+CPPFLAGS := -Wall -g -O3 -std=c++0x #-I /home/cjgao/boost_1_71_0
 LIBS := -L/usr/local/lib -lboost_system -lboost_thread -lpthread 
 
 # debug
