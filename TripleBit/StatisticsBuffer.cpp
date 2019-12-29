@@ -73,8 +73,10 @@ OneConstantStatisticsBuffer::OneConstantStatisticsBuffer(const string path, Stat
 	lastId = 0;
 	usedSpace = 0;
 	reader = NULL;
+	indexSize = 0;//two的初始化了，怎么这个没有初始化
 
-	triples = new Triple[ID_HASH];
+	//triples = new Triple[ID_HASH];
+	triples = (Triple *) malloc(sizeof(Triple) * ID_HASH * 4);
 	first = true;
 }
 
@@ -451,7 +453,8 @@ Status OneConstantStatisticsBuffer::getStatis(unsigned& v1, unsigned v2 /* = 0 *
 			return OK;
 		}
 	}
-	v1 = 0;
+
+	v1 = 0;
 	return ERROR;
 }
 
@@ -474,7 +477,7 @@ Status OneConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 
 	vector<unsigned>::iterator iter, limit;
 
-	for(iter = index.begin(), limit = index.end(); iter != limit; iter++) {
+	for(iter = index.begin(), limit = index.end(); iter != limit; ++iter) {
 		writer = writeData(writer, *iter);
 	}
 	//memcpy(writer, index, indexSize * sizeof(unsigned));
@@ -530,7 +533,7 @@ Status OneConstantStatisticsBuffer::getIDs(EntityIDBuffer* entBuffer, ID minID, 
 
 	i = maxID / ID_HASH + 1;
 	unsigned end1;
-	while(index[i] == 0 && i < indexSize) {
+	while(i < indexSize && index[i] == 0) {
 		i++;
 	}
 	if(i == indexSize)
@@ -556,7 +559,7 @@ Status OneConstantStatisticsBuffer::getIDs(EntityIDBuffer* entBuffer, ID minID, 
 			break;
 
 		endEntry = endEntry + 1;
-		while(index[endEntry] != 0 && endEntry < indexSize) {
+		while(endEntry < indexSize && index[endEntry] != 0) {
 			endEntry++;
 		}
 		if(endEntry == indexSize) {
@@ -625,7 +628,7 @@ const uchar* TwoConstantStatisticsBuffer::decode(const uchar* begin, const uchar
 			++writer;
 			continue;
 		}
-	      // Decode the parts
+		// Decode the parts
 		switch (info&127) {
 		case 0: count=1; break;
 		case 1: count=readDelta1(begin)+1; begin+=1; break;
@@ -1008,9 +1011,9 @@ int TwoConstantStatisticsBuffer::findPredicate(unsigned value1,Triple*pos,Triple
 		if (pos[mid].value1 == value1)
 			return mid; //查找成功返回
 		if (pos[mid].value1 > value1)
-			high = mid - 1; //继续在R[low..mid-1]中查�??
+			high = mid - 1; //继续在R[low..mid-1]中查�??
 		else
-			low = mid + 1; //继续在R[mid+1..high]中查�??
+			low = mid + 1; //继续在R[mid+1..high]中查�??
 	}
 	return -1; //当low>high时表示查找区间为空，查找失败
 
@@ -1035,7 +1038,8 @@ Status TwoConstantStatisticsBuffer::getStatis(unsigned& v1, unsigned v2)
 		v1 = pos->count;
 		return OK;
 	}
-	v1 = 0;
+
+	v1 = 0;
 	return NOT_FOUND;
 }
 
@@ -1067,6 +1071,9 @@ Status TwoConstantStatisticsBuffer::addStatis(unsigned v1, unsigned v2, unsigned
 			cout<<"indexPos: "<<indexPos<<" indexSize: "<<indexSize<<endl;
 #endif
 			index = (Triple*)realloc(index, indexSize * sizeof(Triple) + MemoryBuffer::pagesize * sizeof(Triple));
+			if(index==NULL){
+				cout<<"StatisticsBuffer realloc fail ! "<<endl;
+			}
 			indexSize += MemoryBuffer::pagesize;
 		}
 

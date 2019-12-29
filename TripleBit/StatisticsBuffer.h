@@ -1,4 +1,4 @@
-/*
+﻿/*
  * StatisticsBuffer.h
  *
  *  Created on: Aug 31, 2010
@@ -98,7 +98,7 @@ private:
 
 	unsigned lastId, lastPredicate;
 	unsigned usedSpace;
-	unsigned currentChunkNo;
+	unsigned currentChunkNo;//没有被用到过
 	unsigned indexPos, indexSize;
 
 	Triple triples[3 * 4096];
