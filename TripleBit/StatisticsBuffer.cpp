@@ -1067,7 +1067,7 @@ Status TwoConstantStatisticsBuffer::addStatis(unsigned v1, unsigned v2, unsigned
 		writeUint32(writer, v3); writer += 4;
 
 		if((indexPos + 1) >= indexSize) {
-#ifdef DEBUF
+#ifdef DEBUG
 			cout<<"indexPos: "<<indexPos<<" indexSize: "<<indexSize<<endl;
 #endif
 			index = (Triple*)realloc(index, indexSize * sizeof(Triple) + MemoryBuffer::pagesize * sizeof(Triple));
