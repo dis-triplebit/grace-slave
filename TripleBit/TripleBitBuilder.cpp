@@ -289,14 +289,14 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			}
 
 			if ( subjectID != lastSubject ) {
-				((OneConstantStatisticsBuffer*)statBuffer[0])->addStatis(lastSubject, count0);
-				statBuffer[2]->addStatis(lastSubject, lastPredicate, count1);
+				//((OneConstantStatisticsBuffer*)statBuffer[0])->addStatis(lastSubject, count0);
+				//statBuffer[2]->addStatis(lastSubject, lastPredicate, count1);
 				lastPredicate = predicateID;
 				lastSubject = subjectID;
 				lastObject = objectID;
 				count0 = count1 = 1;
 			} else if ( predicateID != lastPredicate ) {
-				statBuffer[2]->addStatis(lastSubject, lastPredicate, count1);
+				//statBuffer[2]->addStatis(lastSubject, lastPredicate, count1);
 				lastPredicate = predicateID;
 				lastObject = objectID;
 				count0++; count1 = 1;
@@ -318,8 +318,8 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			}
 		}
 		//这里源代码居然没有加最后一个元素的统计信息！
-		((OneConstantStatisticsBuffer*)statBuffer[0])->addStatis(lastSubject, count0);
-		((TwoConstantStatisticsBuffer*)statBuffer[2])->addStatis(lastSubject, lastPredicate, count1);
+		//((OneConstantStatisticsBuffer*)statBuffer[0])->addStatis(lastSubject, count0);
+		//((TwoConstantStatisticsBuffer*)statBuffer[2])->addStatis(lastSubject, lastPredicate, count1);
 
 		fout << num << " triples insert S bitmap success" << endl;
 		fout << getMemoryInfo();
@@ -373,14 +373,14 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			}
 
 			if ( objectID != lastObject ) {
-				((OneConstantStatisticsBuffer*)statBuffer[1])->addStatis(lastObject, count0);
-				statBuffer[3]->addStatis(lastObject, lastPredicate, count1);
+				//((OneConstantStatisticsBuffer*)statBuffer[1])->addStatis(lastObject, count0);
+				//statBuffer[3]->addStatis(lastObject, lastPredicate, count1);
 				lastPredicate = predicateID;
 				lastObject = objectID;
 				lastSubject = subjectID;
 				count0 = count1 = 1;
 			} else if ( predicateID != lastPredicate ) {
-				statBuffer[3]->addStatis(lastObject, lastPredicate, count1);
+				//statBuffer[3]->addStatis(lastObject, lastPredicate, count1);
 				lastPredicate = predicateID;
 				lastSubject = subjectID;
 				count0++; count1 = 1;
@@ -401,8 +401,8 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 				fout << "-------------------------------------" << endl;
 			}
 		}
-		((OneConstantStatisticsBuffer*)statBuffer[1])->addStatis(lastObject, count0);
-		((TwoConstantStatisticsBuffer*)statBuffer[3])->addStatis(lastObject, lastPredicate, count1);
+		//((OneConstantStatisticsBuffer*)statBuffer[1])->addStatis(lastObject, count0);
+		//((TwoConstantStatisticsBuffer*)statBuffer[3])->addStatis(lastObject, lastPredicate, count1);
 		fout << num << " triples insert O bitmap success" << endl;
 		fout << getMemoryInfo();
 		fout << "-------------------------------------" << endl;
