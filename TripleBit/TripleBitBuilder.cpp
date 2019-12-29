@@ -308,7 +308,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			reader = reader + 12;
 			v = generateXY(subjectID, objectID);
 			//0 indicate the triple is sorted by subjects' id;
-			bitmap->insertTriple(predicateID, subjectID, objectID, v, 0);
+			//bitmap->insertTriple(predicateID, subjectID, objectID, v, 0);
 
 			num++;//调试信息
 			if(num%50000000==0){
@@ -392,7 +392,7 @@ Status TripleBitBuilder::resolveTriples(string rawFactsFilename, string sosetFil
 			reader = reader + 12;
 			v = generateXY(objectID, subjectID);
 			// 1 indicate the triple is sorted by objects' id;
-			bitmap->insertTriple(predicateID, objectID, subjectID, v, 1);
+			//bitmap->insertTriple(predicateID, objectID, subjectID, v, 1);
 
 			num++;//调试信息
 			if (num % 50000000 == 0) {
