@@ -13,26 +13,35 @@
 #include "URITable.h"
 #include "MemoryBuffer.h"
 
-extern char* writeData(char* writer, size_t data);
-extern const char* readData(const char* reader, size_t& data);
+extern char* writeData(char* writer, unsigned data);
+char* writeData8byte(char* writer, unsigned long long data)
+{
+	memcpy(writer, &data, sizeof(data));
+	return writer + sizeof(data);
+}
+extern const char* readData(const char* reader, unsigned& data);
+const char* readData8byte(const char* reader, unsigned long long& data)
+{
+	memcpy(&data, reader, sizeof(data));
+	return reader + sizeof(data);
+}
+//将统计索引存进磁盘/读取，为了将一部分元信息(indexSize,usedSpace)改为unsigned long long类型，所以要多出来两个读写8字节的函数
 
 static inline unsigned readDelta1(const unsigned char* pos) { return pos[0]; }
 static unsigned readDelta2(const unsigned char* pos) { return (pos[0]<<8)|pos[1]; }
 static unsigned readDelta3(const unsigned char* pos) { return (pos[0]<<16)|(pos[1]<<8)|pos[2]; }
 static unsigned readDelta4(const unsigned char* pos) { return (pos[0]<<24)|(pos[1]<<16)|(pos[2]<<8)|pos[3]; }
 
-static void writeUint32(unsigned char* target,unsigned value)
-   // Write a 32bit value
-{
+// Write a 32bit value，写到内存
+static void writeUint32(unsigned char* target,unsigned value){
    target[0]=value>>24;
    target[1]=(value>>16)&0xFF;
    target[2]=(value>>8)&0xFF;
    target[3]=value&0xFF;
 }
 
-static unsigned char* writeDelta0(unsigned char* buffer, unsigned value)
-   // Write an integer with varying size
-{
+// Write an integer with varying size
+static unsigned char* writeDelta0(unsigned char* buffer, unsigned value){
 	if (value >= (1 << 24)) {
 		writeUint32(buffer, value);
 		return buffer + 4;
@@ -135,7 +144,7 @@ unsigned OneConstantStatisticsBuffer::getLen(unsigned v)
 		return 0;
 }
 
-static size_t countEntity(const unsigned char* begin, const unsigned char* end)
+static size_t countEntity(const unsigned char* begin, const unsigned char* end)//没有被用到过
 {
 	if(begin >= end) 
 		return 0;
@@ -265,6 +274,7 @@ const unsigned char* OneConstantStatisticsBuffer::decode(const unsigned char* be
 	return begin;
 }
 
+//除了输出调试信息，没有被用到过
 size_t OneConstantStatisticsBuffer::getEntityCount()
 {
 	size_t entityCount = 0;
@@ -390,6 +400,7 @@ bool OneConstantStatisticsBuffer::find(unsigned value)
 
 }
 
+//没有被用到过
 bool OneConstantStatisticsBuffer::find_last(unsigned value)
 {
 	//const Triple* l = pos, *r = posLimit;
@@ -417,9 +428,9 @@ bool OneConstantStatisticsBuffer::find_last(unsigned value)
 
 Status OneConstantStatisticsBuffer::getStatis(unsigned& v1, unsigned v2 /* = 0 */)
 {
-	unsigned i;
+	unsigned long long i;
 	unsigned begin = index[ v1 / ID_HASH];
-	unsigned end = 0;
+	unsigned long long end = 0;
 
 	i = v1 / ID_HASH + 1;
 	while(i < indexSize) { // get next chunk start offset;
@@ -472,14 +483,16 @@ Status OneConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 		indexBuffer->resize((index.size() + 2) * 4);
 		writer = indexBuffer->get_address() + size;
 	}
-	writer = writeData(writer, usedSpace);
-	writer = writeData(writer, index.size());
-
+	writer = writeData8byte(writer, usedSpace);
+	writer = writeData8byte(writer, index.size());//indexSize==index.size()
+	//这个writer指向index文件（MMapBuffer）
+	//这个文件的存储结构是，前几个字节是index的源信息，indexSize和UsedSpace。后边的内容为index本体内容
 	vector<unsigned>::iterator iter, limit;
 
 	for(iter = index.begin(), limit = index.end(); iter != limit; ++iter) {
 		writer = writeData(writer, *iter);
-	}
+	}//这里用循环writeData代替了memcpy
+	//底层的存进磁盘不用管，因为的mmap机制
 	//memcpy(writer, index, indexSize * sizeof(unsigned));
 
 	return OK;
@@ -489,13 +502,15 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 {
 	OneConstantStatisticsBuffer* statBuffer = new OneConstantStatisticsBuffer(path, type);
 
-	size_t size, first;
-	indexBuffer = (char*)readData(indexBuffer, statBuffer->usedSpace);
-	indexBuffer = (char*)readData(indexBuffer, size);
+	unsigned long long size;
+	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->usedSpace);
+	indexBuffer = (char*)readData8byte(indexBuffer, size);
 
 	statBuffer->index.resize(0);
 
 	statBuffer->indexSize = size;
+
+	unsigned first;
 
 	for( unsigned i = 0; i < size; i++ ) {
 		indexBuffer = (char*)readData(indexBuffer, first);
@@ -505,7 +520,7 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 	return statBuffer;
 }
 
-Status OneConstantStatisticsBuffer::getIDs(EntityIDBuffer* entBuffer, ID minID, ID maxID)
+Status OneConstantStatisticsBuffer::getIDs(EntityIDBuffer* entBuffer, ID minID, ID maxID)//没有被用到过
 {
 	unsigned i = 0, endEntry = 0;
 	unsigned begin = index[ minID / HASH_RANGE], end = 0;
@@ -769,7 +784,7 @@ const uchar* TwoConstantStatisticsBuffer::decode(const uchar* begin, const uchar
 	return begin;
 }
 
-const uchar* TwoConstantStatisticsBuffer::decodeIdAndPredicate(const uchar* begin, const uchar* end)
+const uchar* TwoConstantStatisticsBuffer::decodeIdAndPredicate(const uchar* begin, const uchar* end)//没有被用到过
 {
 	unsigned value1 = readDelta4(begin); begin += 4;
 	unsigned value2 = readDelta4(begin); begin += 4;
@@ -952,8 +967,8 @@ static inline bool less(unsigned a1, unsigned a2, unsigned b1, unsigned b2) {
 bool TwoConstantStatisticsBuffer::find(unsigned value1, unsigned value2)
 {
 	//const Triple* l = pos, *r = posLimit;
-	int left = 0, right = posLimit - pos;
-	int middle;
+	long long left = 0, right = posLimit - pos;
+	long long middle;
 
 	while (left != right) {
 		middle = left + ((right - left) / 2);
@@ -979,11 +994,11 @@ bool TwoConstantStatisticsBuffer::find(unsigned value1, unsigned value2)
  * pos: the start address of the first triple;
  * posLimit: the end address of last triple;
  */
-bool TwoConstantStatisticsBuffer::find_last(unsigned value1, unsigned value2)
+bool TwoConstantStatisticsBuffer::find_last(unsigned value1, unsigned value2)//没有被用到过
 {
 	//const Triple* l = pos, *r = posLimit;
-	int left = 0, right = posLimit - pos;
-	int middle = 0;
+	long long left = 0, right = posLimit - pos;
+	long long middle = 0;
 
 	while (left < right) {
 		middle = left + ((right - left) / 2);
@@ -1005,7 +1020,7 @@ bool TwoConstantStatisticsBuffer::find_last(unsigned value1, unsigned value2)
 }
 
 int TwoConstantStatisticsBuffer::findPredicate(unsigned value1,Triple*pos,Triple* posLimit){
-	int low = 0, high= posLimit - pos,mid;
+	long long low = 0, high= posLimit - pos,mid;
 	while (low <= high) { //当前查找区间R[low..high]非空
 		mid = low + ((high - low)/2);
 		if (pos[mid].value1 == value1)
@@ -1021,19 +1036,22 @@ int TwoConstantStatisticsBuffer::findPredicate(unsigned value1,Triple*pos,Triple
 
 Status TwoConstantStatisticsBuffer::getStatis(unsigned& v1, unsigned v2)
 {
-	pos = index, posLimit = index + indexPos;
+	TripleIndex* postemp;
+	TripleIndex* posLimittemp;
+	postemp = index, posLimittemp = index + indexPos;
 	find(v1, v2);
-	if(::greater(pos->value1, pos->value2, v1, v2))
-		pos--;
+	if(::greater(postemp->value1, postemp->value2, v1, v2))
+		postemp--;
 
-	unsigned start = pos->count; pos++;
-	unsigned end = pos->count;
-	if(pos == (index + indexPos))
+	unsigned long long start = postemp->count; postemp++;
+	unsigned long long end = postemp->count;
+	if(postemp == (index + indexPos))
 		end = usedSpace;
 
 	const unsigned char* begin = (uchar*)buffer->getBuffer() + start, *limit = (uchar*)buffer->getBuffer() + end;
 	decode(begin, limit);
 	find(v1, v2);
+	//pos会在上边两个函数里被改变
 	if(pos->value1 == v1 && pos->value2 == v2) {
 		v1 = pos->count;
 		return OK;
@@ -1070,7 +1088,7 @@ Status TwoConstantStatisticsBuffer::addStatis(unsigned v1, unsigned v2, unsigned
 #ifdef DEBUG
 			cout<<"indexPos: "<<indexPos<<" indexSize: "<<indexSize<<endl;
 #endif
-			index = (Triple*)realloc(index, indexSize * sizeof(Triple) + MemoryBuffer::pagesize * sizeof(Triple));
+			index = (TripleIndex*)realloc(index, indexSize * sizeof(TripleIndex) + MemoryBuffer::pagesize * sizeof(TripleIndex));
 			if(index==NULL){
 				cout<<"StatisticsBuffer realloc fail ! "<<endl;
 			}
@@ -1079,7 +1097,7 @@ Status TwoConstantStatisticsBuffer::addStatis(unsigned v1, unsigned v2, unsigned
 
 		index[indexPos].value1 = v1;
 		index[indexPos].value2 = v2;
-		index[indexPos].count = usedSpace; //record offset
+		index[indexPos].count = usedSpace; //record offset，就是因为这里，迫不得已把count也改成了unsigned long long这样的话存储结构就变了，除非存取方式不是按字节
 		indexPos++;
 
 		first = false;
@@ -1108,18 +1126,18 @@ Status TwoConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 {
 	char* writer;
 	if(indexBuffer == NULL) {
-		indexBuffer = MMapBuffer::create(string(string(DATABASE_PATH) + "/statIndex").c_str(), indexPos * sizeof(Triple) + 2 * sizeof(unsigned));
+		indexBuffer = MMapBuffer::create(string(string(DATABASE_PATH) + "/statIndex").c_str(), indexPos * sizeof(TripleIndex) + 2 * sizeof(unsigned));
 		writer = indexBuffer->get_address();
 	} else {
 		size_t size = indexBuffer->getSize();
-		indexBuffer->resize(indexPos * sizeof(Triple) + 2 * sizeof(unsigned long long));
+		indexBuffer->resize(indexPos * sizeof(TripleIndex) + 2 * sizeof(unsigned long long));
 		writer = indexBuffer->get_address() + size;
 	}
 
-	writer = writeData(writer, usedSpace);
-	writer = writeData(writer, indexPos);
+	writer = writeData8byte(writer, usedSpace);
+	writer = writeData8byte(writer, indexPos);
 
-	memcpy(writer, (char*)index, indexPos * sizeof(Triple));
+	memcpy(writer, (char*)index, indexPos * sizeof(TripleIndex));//直接利用memcpy的方式把index里的东西存在writer，然后进磁盘(mmap)，这种存取方式不用担心内部存储结构的更改
 #ifdef DEBUG
 	for(int i = 0; i < 3; i++)
 	{
@@ -1136,15 +1154,15 @@ Status TwoConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 TwoConstantStatisticsBuffer* TwoConstantStatisticsBuffer::load(StatisticsType type, const string path, char*& indexBuffer)
 {
 	TwoConstantStatisticsBuffer* statBuffer = new TwoConstantStatisticsBuffer(path, type);
-
-	indexBuffer = (char*)readData(indexBuffer, statBuffer->usedSpace);
-	indexBuffer = (char*)readData(indexBuffer, statBuffer->indexPos);
+	//这里用mmap存取，在构造函数里
+	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->usedSpace);
+	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->indexPos);
 #ifdef DEBUG
 	cout<<__FUNCTION__<<"indexPos: "<<statBuffer->indexPos<<endl;
 #endif
 	// load index;
-	statBuffer->index = (Triple*)indexBuffer;
-	indexBuffer = indexBuffer + statBuffer->indexPos * sizeof(Triple);
+	statBuffer->index = (TripleIndex*)indexBuffer;
+	indexBuffer = indexBuffer + statBuffer->indexPos * sizeof(TripleIndex);
 
 #ifdef DEBUG
 	for(int i = 0; i < 3; i++)
@@ -1170,69 +1188,69 @@ unsigned TwoConstantStatisticsBuffer::getLen(unsigned v)
 		return 0;
 }
 
-Status TwoConstantStatisticsBuffer::getPredicatesByID(unsigned id,EntityIDBuffer* entBuffer, ID minID, ID maxID) {
-	Triple* pos, *posLimit;
-	pos = index;
-	posLimit = index + indexPos;
-	find(id, pos, posLimit);
-	//cout << "findchunk:" << pos->value1 << "  " << pos->value2 << endl;
-	assert(pos >= index && pos < posLimit);
-	Triple* startChunk = pos;
-	Triple* endChunk = pos;
-	while (startChunk->value1 > id && startChunk >= index) {
-		startChunk--;
-	}
-	while (endChunk->value1 <= id && endChunk < posLimit) {
-		endChunk++;
-	}
-
-	const unsigned char* begin, *limit;
-	Triple* chunkIter = startChunk;
-
-	while (chunkIter < endChunk) {
-		//		cout << "------------------------------------------------" << endl;
-		begin = (uchar*) buffer->get_address() + chunkIter->count;
-		//		printf("1: %x  %x  %u\n",begin, buffer->get_address() ,chunkIter->count);
-		chunkIter++;
-		if (chunkIter == index + indexPos)
-			limit = (uchar*) buffer->get_address() + usedSpace;
-		else
-			limit = (uchar*) buffer->get_address() + chunkIter->count;
-		//		printf("2: %x  %x  %u\n",limit, buffer->get_address() ,chunkIter->count);
-
-		Triple* triples = new Triple[3 * MemoryBuffer::pagesize];
-		decode(begin, limit, triples, pos, posLimit);
-
-		int mid = findPredicate(id, pos, posLimit), loc = mid;
-		//		cout << mid << "  " << loc << endl;
-
-
-		if (loc == -1)
-			continue;
-		entBuffer->insertID(pos[loc].value2);
-		//	cout << "result:" << pos[loc].value2<< endl;
-		while (pos[--loc].value1 == id && loc >= 0) {
-			entBuffer->insertID(pos[loc].value2);
-			//			cout << "result:" << pos[loc].value2<< endl;
-		}
-		loc = mid;
-		while (pos[++loc].value1 == id && loc < posLimit - pos) {
-			entBuffer->insertID(pos[loc].value2);
-			//			cout << "result:" << pos[loc].value2<< endl;
-		}
-		delete triples;
-	}
-
-	//	entBuffer->print();
-	return OK;
-}
+//Status TwoConstantStatisticsBuffer::getPredicatesByID(unsigned id,EntityIDBuffer* entBuffer, ID minID, ID maxID) {//没有被用到过
+//	Triple* pos, *posLimit;
+//	pos = index;
+//	posLimit = index + indexPos;
+//	find(id, pos, posLimit);
+//	//cout << "findchunk:" << pos->value1 << "  " << pos->value2 << endl;
+//	assert(pos >= index && pos < posLimit);
+//	Triple* startChunk = pos;
+//	Triple* endChunk = pos;
+//	while (startChunk->value1 > id && startChunk >= index) {
+//		startChunk--;
+//	}
+//	while (endChunk->value1 <= id && endChunk < posLimit) {
+//		endChunk++;
+//	}
+//
+//	const unsigned char* begin, *limit;
+//	Triple* chunkIter = startChunk;
+//
+//	while (chunkIter < endChunk) {
+//		//		cout << "------------------------------------------------" << endl;
+//		begin = (uchar*) buffer->get_address() + chunkIter->count;
+//		//		printf("1: %x  %x  %u\n",begin, buffer->get_address() ,chunkIter->count);
+//		chunkIter++;
+//		if (chunkIter == index + indexPos)
+//			limit = (uchar*) buffer->get_address() + usedSpace;
+//		else
+//			limit = (uchar*) buffer->get_address() + chunkIter->count;
+//		//		printf("2: %x  %x  %u\n",limit, buffer->get_address() ,chunkIter->count);
+//
+//		Triple* triples = new Triple[3 * MemoryBuffer::pagesize];
+//		decode(begin, limit, triples, pos, posLimit);
+//
+//		int mid = findPredicate(id, pos, posLimit), loc = mid;
+//		//		cout << mid << "  " << loc << endl;
+//
+//
+//		if (loc == -1)
+//			continue;
+//		entBuffer->insertID(pos[loc].value2);
+//		//	cout << "result:" << pos[loc].value2<< endl;
+//		while (pos[--loc].value1 == id && loc >= 0) {
+//			entBuffer->insertID(pos[loc].value2);
+//			//			cout << "result:" << pos[loc].value2<< endl;
+//		}
+//		loc = mid;
+//		while (pos[++loc].value1 == id && loc < posLimit - pos) {
+//			entBuffer->insertID(pos[loc].value2);
+//			//			cout << "result:" << pos[loc].value2<< endl;
+//		}
+//		delete triples;
+//	}
+//
+//	//	entBuffer->print();
+//	return OK;
+//}
 
 bool TwoConstantStatisticsBuffer::find(unsigned value1,Triple*& pos,Triple*& posLimit)
 {//find by the value1
 	//const Triple* l = pos, *r = posLimit;
-	int left = 0, right = posLimit - pos;
+	long long left = 0, right = posLimit - pos;
 //	cout << "right:" << right << endl;
-	int middle=0;
+	long long middle=0;
 
 	while (left < right) {
 		middle = left + ((right - left) / 2);
@@ -1257,7 +1275,7 @@ bool TwoConstantStatisticsBuffer::find(unsigned value1,Triple*& pos,Triple*& pos
 	}
 }
 
-const uchar* TwoConstantStatisticsBuffer::decode(const uchar* begin, const uchar* end,Triple*triples,Triple* &pos,Triple* &posLimit)
+const uchar* TwoConstantStatisticsBuffer::decode(const uchar* begin, const uchar* end,Triple* triples,Triple* &pos,Triple* &posLimit)
 {
 //	printf("decode   %x  %x\n",begin,end);
 	unsigned value1 = readDelta4(begin); begin += 4;

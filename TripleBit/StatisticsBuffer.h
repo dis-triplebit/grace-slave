@@ -14,6 +14,8 @@ class MMapBuffer;
 
 #include "TripleBit.h"
 
+//原始统计信息和index信息分开存储了，原始统计信息在每个StatisticsBuffer的writer/reader指针底下，具体内容为buffer指针指向的MMApBuffer类
+
 class StatisticsBuffer {
 public:
 	enum StatisticsType { SUBJECT_STATIS, OBJECT_STATIS, SUBJECTPREDICATE_STATIS, OBJECTPREDICATE_STATIS };
@@ -35,7 +37,7 @@ class OneConstantStatisticsBuffer : public StatisticsBuffer {
 public:
 	struct Triple {
 		ID value1;
-		ID count;
+		unsigned count;
 	};
 
 private:
@@ -45,11 +47,11 @@ private:
 	unsigned char* writer;
 
 	/// index for query;
-	vector<unsigned> index;
-	size_t indexSize;
+	vector<ID> index;
+	unsigned long long indexSize;
 	unsigned nextHashValue;
 	unsigned lastId;
-	size_t usedSpace;
+	unsigned long long usedSpace;
 
 	const unsigned ID_HASH;
 
@@ -63,8 +65,8 @@ public:
 	Status save(MMapBuffer*& indexBuffer);
 	static OneConstantStatisticsBuffer* load(StatisticsType type, const string path, char*& indexBuffer);
 	/// get the subject or object ids from minID to maxID;
-	Status getIDs(EntityIDBuffer* entBuffer, ID minID, ID maxID);
-	size_t getEntityCount();
+	Status getIDs(EntityIDBuffer* entBuffer, ID minID, ID maxID);//没有被用到过
+	size_t getEntityCount();//除了输出调试信息，没有被用到过
 private:
 	/// write a id to buffer; isID indicate the id really is a ID, maybe is a count.
 	void writeId(unsigned id, char*& ptr, bool isID);
@@ -77,15 +79,20 @@ private:
 
 	const unsigned char* decode(const unsigned char* begin, const unsigned char* end);
 	bool find(unsigned value);
-	bool find_last(unsigned value);
+	bool find_last(unsigned value);//没有被用到过
 };
 
 class TwoConstantStatisticsBuffer : public StatisticsBuffer {
 public:
-	struct Triple{
+	struct Triple {
 		ID value1;
 		ID value2;
 		unsigned count;
+	};
+	struct TripleIndex{
+		ID value1;
+		ID value2;
+		unsigned long long count;
 	};
 
 private:
@@ -94,15 +101,15 @@ private:
 	const unsigned char* reader;
 	unsigned char* writer;
 
-	Triple* index;
-
+	TripleIndex* index;//index里存的可能只是偏移数据，并不是真正的源数据，源数据在buffer里边，reader指向
+	
 	unsigned lastId, lastPredicate;
-	size_t usedSpace;
+	unsigned long long usedSpace;
 	unsigned long long currentChunkNo;//没有被用到过
-	size_t indexPos, indexSize;
+	unsigned long long indexPos, indexSize;
 
-	Triple triples[3 * 4096];
 	Triple* pos, *posLimit;
+	Triple triples[3 * 4096];//里边的东西是在查询的时候进行填充的，并且内容很少,存的就是统计信息，不是索引
 	bool first;
 public:
 	TwoConstantStatisticsBuffer(const string path, StatisticsType type);
@@ -112,7 +119,7 @@ public:
 	/// get a statistics record;
 	Status getStatis(unsigned& v1, unsigned v2);
 	/// get the buffer position by a id, used in query
-	Status getPredicatesByID(unsigned id, EntityIDBuffer* buffer, ID minID, ID maxID);
+	//Status getPredicatesByID(unsigned id, EntityIDBuffer* buffer, ID minID, ID maxID);//没有被用到过
 	/// save the statistics buffer;
 	Status save(MMapBuffer*& indexBuffer);
 	/// load the statistics buffer;
@@ -123,12 +130,12 @@ private:
 	/// decode a chunk
 	const uchar* decode(const uchar* begin, const uchar* end);
 	/// decode id and predicate in a chunk
-	const uchar* decodeIdAndPredicate(const uchar* begin, const uchar* end);
+	const uchar* decodeIdAndPredicate(const uchar* begin, const uchar* end);//没有被用到过
 	///
 	bool find(unsigned value1, unsigned value2);
 	int findPredicate(unsigned,Triple*,Triple*);
 	///
-	bool find_last(unsigned value1, unsigned value2);
+	bool find_last(unsigned value1, unsigned value2);//没有被用到过
 	bool find(unsigned,Triple* &,Triple* &);
 	const uchar* decode(const uchar* begin, const uchar* end,Triple*,Triple*& ,Triple*&);
 

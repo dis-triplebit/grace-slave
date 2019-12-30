@@ -336,13 +336,13 @@ unsigned HashIndex::next(ID id)
 	return hashTableEntries[firstHash];
 }
 
-char* writeData(char* writer, size_t data)
+char* writeData(char* writer, unsigned data)
 {
 	memcpy(writer, &data, sizeof(data));
 	return writer+ sizeof(data);
 }
 
-const char* readData(const char* reader, size_t& data)
+const char* readData(const char* reader, unsigned& data)
 {
 	memcpy(&data, reader, sizeof(data));
 	return reader+ sizeof(data);

@@ -514,6 +514,11 @@ Status TripleBitBuilder::endBuild() {
 	cout << "bitmap save end" << endl;
 	ofstream ofile(string(dir + "/statIndex").c_str());
 	MMapBuffer* indexBuffer = NULL;
+
+	//因为统计索引原始信息使用的是mmap机制，所以会从MmapBuffer的类析构函数自动存储进磁盘
+	//这里statBuffer的save存的只是index信息，并且从代码中看出，4个index都存到了一个文件中，也就是indexBuffer这个文件StatisticsBuffer
+	//这个文件每一部分的存储结构是，前几个字节是index的源信息，indexSize和UsedSpace。后边的内容为index本体内容（这个从StatisticsBuffer里的save函数可以看出）
+	//并且每一部分按次序排放，在load的时候也要按次序读取
 	cout << "statBuffer[0] save" << endl;
 	((OneConstantStatisticsBuffer*)statBuffer[0])->save(indexBuffer);
 	cout << "statBuffer[0] save end" << endl;
