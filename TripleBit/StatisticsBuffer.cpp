@@ -13,8 +13,8 @@
 #include "URITable.h"
 #include "MemoryBuffer.h"
 
-extern char* writeData(char* writer, unsigned data);
-extern const char* readData(const char* reader, unsigned int& data);
+extern char* writeData(char* writer, unsigned long long data);
+extern const char* readData(const char* reader, unsigned long long& data);
 
 static inline unsigned readDelta1(const unsigned char* pos) { return pos[0]; }
 static unsigned readDelta2(const unsigned char* pos) { return (pos[0]<<8)|pos[1]; }
@@ -475,7 +475,7 @@ Status OneConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 	writer = writeData(writer, usedSpace);
 	writer = writeData(writer, index.size());
 
-	vector<unsigned>::iterator iter, limit;
+	vector<unsigned long long>::iterator iter, limit;
 
 	for(iter = index.begin(), limit = index.end(); iter != limit; ++iter) {
 		writer = writeData(writer, *iter);
@@ -489,7 +489,7 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 {
 	OneConstantStatisticsBuffer* statBuffer = new OneConstantStatisticsBuffer(path, type);
 
-	unsigned size, first;
+	unsigned long long size, first;
 	indexBuffer = (char*)readData(indexBuffer, statBuffer->usedSpace);
 	indexBuffer = (char*)readData(indexBuffer, size);
 

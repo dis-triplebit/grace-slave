@@ -45,11 +45,11 @@ private:
 	unsigned char* writer;
 
 	/// index for query;
-	vector<unsigned> index;
-	unsigned indexSize;
+	vector<unsigned long long> index;
+	unsigned long long indexSize;
 	unsigned nextHashValue;
 	unsigned lastId;
-	unsigned usedSpace;
+	unsigned long long usedSpace;
 
 	const unsigned ID_HASH;
 
@@ -69,7 +69,7 @@ private:
 	/// write a id to buffer; isID indicate the id really is a ID, maybe is a count.
 	void writeId(unsigned id, char*& ptr, bool isID);
 	/// read a id from buffer;
-	const char* readId(unsigned& id, const char* ptr, bool isID);
+	const char* readId(unsigned& id, const char* ptr, bool isID);//没有用到
 	/// judge the buffer is full;
 	bool isPtrFull(unsigned len);
 	/// get the value length in bytes;

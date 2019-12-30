@@ -3,7 +3,7 @@
  *
  *	 Created on: 2014-6-13
  *       Author: IBM
- *	Modified on: 2019�?8�?3�?
+ *	Modified on: 2019骞?8鏈?3鏃?
  */
 
 #include "HashIndex.h"
@@ -25,7 +25,7 @@ HashIndex::HashIndex(ChunkManager& _chunkManager, IndexType type) : chunkManager
 HashIndex::~HashIndex() {
 	// TODO Auto-generated destructor stub
 	if(hashTable != NULL) {
-		//删除临时文件�??
+		//鍒犻櫎涓存椂鏂囦欢锛??
 		//hashTable->discard();
 		delete hashTable;
 		hashTable = NULL;
@@ -336,13 +336,13 @@ unsigned HashIndex::next(ID id)
 	return hashTableEntries[firstHash];
 }
 
-char* writeData(char* writer, unsigned int data)
+char* writeData(char* writer, unsigned long long data)
 {
 	memcpy(writer, &data, 4);
 	return writer+4;
 }
 
-const char* readData(const char* reader, unsigned int& data)
+const char* readData(const char* reader, unsigned long long& data)
 {
 	memcpy(&data, reader, 4);
 	return reader+4;
