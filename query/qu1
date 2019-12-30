@@ -1,3 +1,1 @@
-select ?x where{
-4195 16 ?x .
-}
+select ?x where{ 4195 16 ?x . }
