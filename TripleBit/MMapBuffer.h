@@ -16,16 +16,15 @@ class MMapBuffer {
 	char volatile* mmap_addr;
 	char* curretHead;
 	string filename;
-	//size_t size;
-	unsigned long long size;//之前是size_t，改成longlong试试
+	size_t size;
 public:
 	char* resize(size_t incrementSize);
 	char* getBuffer();
 	char* getBuffer(int pos);
 	void discard();
 	Status flush();
-	unsigned long long getSize() { return size;}
-	unsigned long long get_length() { return size;}
+	size_t getSize() { return size;}
+	size_t get_length() { return size;}
 	char * get_address() const { return (char*)mmap_addr; }
 
 	virtual Status resize(unsigned long	long new_size,bool clear);

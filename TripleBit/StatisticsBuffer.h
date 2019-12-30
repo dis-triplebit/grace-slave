@@ -35,7 +35,7 @@ class OneConstantStatisticsBuffer : public StatisticsBuffer {
 public:
 	struct Triple {
 		ID value1;
-		unsigned count;
+		ID count;
 	};
 
 private:
@@ -45,11 +45,11 @@ private:
 	unsigned char* writer;
 
 	/// index for query;
-	vector<unsigned long long> index;
-	unsigned long long indexSize;
+	vector<unsigned> index;
+	size_t indexSize;
 	unsigned nextHashValue;
 	unsigned lastId;
-	unsigned long long usedSpace;
+	size_t usedSpace;
 
 	const unsigned ID_HASH;
 
@@ -64,7 +64,7 @@ public:
 	static OneConstantStatisticsBuffer* load(StatisticsType type, const string path, char*& indexBuffer);
 	/// get the subject or object ids from minID to maxID;
 	Status getIDs(EntityIDBuffer* entBuffer, ID minID, ID maxID);
-	unsigned int getEntityCount();
+	size_t getEntityCount();
 private:
 	/// write a id to buffer; isID indicate the id really is a ID, maybe is a count.
 	void writeId(unsigned id, char*& ptr, bool isID);
@@ -85,7 +85,7 @@ public:
 	struct Triple{
 		ID value1;
 		ID value2;
-		ID count;
+		unsigned count;
 	};
 
 private:
@@ -97,9 +97,9 @@ private:
 	Triple* index;
 
 	unsigned lastId, lastPredicate;
-	unsigned long long usedSpace;
+	size_t usedSpace;
 	unsigned long long currentChunkNo;//没有被用到过
-	unsigned long long indexPos, indexSize;
+	size_t indexPos, indexSize;
 
 	Triple triples[3 * 4096];
 	Triple* pos, *posLimit;

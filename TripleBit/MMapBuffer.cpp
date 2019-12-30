@@ -62,7 +62,7 @@ Status MMapBuffer::flush()
 
 char* MMapBuffer::resize(size_t incrementSize)
 {
-	unsigned long long newsize = size + incrementSize;//之前的size_t
+	size_t newsize = size + incrementSize;//之前的size_t
 
 	//cout<<filename.c_str()<<": "<<__FUNCTION__<<" begin: "<<size<<" : "<<newsize<<endl;
 
@@ -110,7 +110,7 @@ char* MMapBuffer::getBuffer(int pos)
 	return (char*)mmap_addr + pos;
 }
 
-Status MMapBuffer::resize(unsigned long	long new_size, bool clear)//之前是size_t
+Status MMapBuffer::resize(size_t new_size, bool clear)//之前是size_t
 {
 	//size_t newsize = size + incrementSize;
 	char* new_addr = NULL;

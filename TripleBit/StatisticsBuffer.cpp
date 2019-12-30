@@ -13,8 +13,8 @@
 #include "URITable.h"
 #include "MemoryBuffer.h"
 
-extern char* writeData(char* writer, unsigned long long data);
-extern const char* readData(const char* reader, unsigned long long& data);
+extern char* writeData(char* writer, size_t data);
+extern const char* readData(const char* reader, size_t& data);
 
 static inline unsigned readDelta1(const unsigned char* pos) { return pos[0]; }
 static unsigned readDelta2(const unsigned char* pos) { return (pos[0]<<8)|pos[1]; }
@@ -135,14 +135,14 @@ unsigned OneConstantStatisticsBuffer::getLen(unsigned v)
 		return 0;
 }
 
-static unsigned int countEntity(const unsigned char* begin, const unsigned char* end)
+static size_t countEntity(const unsigned char* begin, const unsigned char* end)
 {
 	if(begin >= end) 
 		return 0;
 
 	//cout<<"begin - end: "<<end - begin<<endl;
 
-	unsigned int entityCount = 0;
+	size_t entityCount = 0;
 	entityCount = 1;
 	begin = begin + 8;
 
@@ -265,13 +265,13 @@ const unsigned char* OneConstantStatisticsBuffer::decode(const unsigned char* be
 	return begin;
 }
 
-unsigned int OneConstantStatisticsBuffer::getEntityCount()
+size_t OneConstantStatisticsBuffer::getEntityCount()
 {
-	unsigned int entityCount = 0;
-	unsigned i = 0;
+	size_t entityCount = 0;
+	size_t i = 0;
 
 	const unsigned char* begin, *end;
-	unsigned beginChunk = 0, endChunk = 0;
+	size_t beginChunk = 0, endChunk = 0;
 
 #ifdef DEBUG
 	cout<<"indexSize: "<<indexSize<<endl;
@@ -475,7 +475,7 @@ Status OneConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 	writer = writeData(writer, usedSpace);
 	writer = writeData(writer, index.size());
 
-	vector<unsigned long long>::iterator iter, limit;
+	vector<unsigned>::iterator iter, limit;
 
 	for(iter = index.begin(), limit = index.end(); iter != limit; ++iter) {
 		writer = writeData(writer, *iter);
@@ -489,7 +489,7 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 {
 	OneConstantStatisticsBuffer* statBuffer = new OneConstantStatisticsBuffer(path, type);
 
-	unsigned long long size, first;
+	size_t size, first;
 	indexBuffer = (char*)readData(indexBuffer, statBuffer->usedSpace);
 	indexBuffer = (char*)readData(indexBuffer, size);
 
