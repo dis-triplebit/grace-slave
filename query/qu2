@@ -1,0 +1,1 @@
+select ?x ?y where { ?x 9 1473 . 1770 16 ?x . }
