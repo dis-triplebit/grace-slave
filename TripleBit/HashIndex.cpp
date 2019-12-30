@@ -3,7 +3,7 @@
  *
  *	 Created on: 2014-6-13
  *       Author: IBM
- *	Modified on: 2019年08月03日
+ *	Modified on: 2019�?8�?3�?
  */
 
 #include "HashIndex.h"
@@ -25,7 +25,7 @@ HashIndex::HashIndex(ChunkManager& _chunkManager, IndexType type) : chunkManager
 HashIndex::~HashIndex() {
 	// TODO Auto-generated destructor stub
 	if(hashTable != NULL) {
-		//删除临时文件＄1�7
+		//删除临时文件�??
 		//hashTable->discard();
 		delete hashTable;
 		hashTable = NULL;

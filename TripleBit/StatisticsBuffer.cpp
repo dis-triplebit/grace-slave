@@ -73,7 +73,7 @@ OneConstantStatisticsBuffer::OneConstantStatisticsBuffer(const string path, Stat
 	lastId = 0;
 	usedSpace = 0;
 	reader = NULL;
-	indexSize = 0;//two的初始化了，怎么这个没有初始化
+	indexSize = 0;//two的初始化了，怎么这个没有初始化,原来是在load的时候才用到的变量
 
 	//triples = new Triple[ID_HASH];
 	triples = (Triple *) malloc(sizeof(Triple) * ID_HASH * 4);

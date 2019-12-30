@@ -1,8 +1,7 @@
-/*
+ï»¿/*
  * LineHashIndex.cpp
  *
- *  Created on: 2019å¹´05æœˆ19æ—¥
- *      Author: favoniankong
+ *  Created on: 2019éªž?5éˆ?9éƒ? *      Author: favoniankong
  */
 
 #include "LineHashIndex.h"
@@ -133,7 +132,7 @@ bool LineHashIndex::buildLine(int startEntry, int endEntry, int lineNo)
 static ID splitID[3] =
 { 255, 65535, 16777215 };
 
-Status LineHashIndex::buildIndex(unsigned chunkType) //½¨Á¢Ë÷Òý chunkType: 1: x>y ; 2: x<y
+Status LineHashIndex::buildIndex(unsigned chunkType) //å»ºç«‹ç´¢å¼• chunkType: 1: x>y ; 2: x<y
 {
 	if (idTable == NULL)
 	{
