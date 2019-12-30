@@ -7,7 +7,7 @@
 using namespace std;
 //---------------------------------------------------------------------------
 /// Maximum amount of usable memory. XXX detect at runtime!
-static const unsigned memoryLimit = sizeof(void*) * (1 << 27);//512MB
+static const unsigned memoryLimit = sizeof(void*) * (1 << 27);//438MB
 //---------------------------------------------------------------------------
 namespace {
 //---------------------------------------------------------------------------
@@ -73,20 +73,24 @@ void Sorter::sort(string logfilename, string filename, TempFile& out, const char
 
 	// Produce runs
 	vector<Range> runs;
-	TempFile intermediate(out.getBaseFile());//ÕâÀïµÄintermediateÊÇÓÉoutÓÖÉú³ÉµÄÒ»¸öÎÄ¼ş£¬ÓÃÀ´´æµ±ÎÄ¼ş´óĞ¡Ã»ÓĞ³¬¹ımemoryLimitµÄ×îºóÒ»¸ö·Ö¶ÎÎÄ¼ş
+	TempFile intermediate(out.getBaseFile());//è¿™é‡Œçš„intermediateæ˜¯ç”±outåˆç”Ÿæˆçš„ä¸€ä¸ªæ–‡ä»¶ï¼Œç”¨æ¥å­˜å½“æ–‡ä»¶å¤§å°æ²¡æœ‰è¶…è¿‡memoryLimitçš„æœ€åä¸€ä¸ªåˆ†æ®µæ–‡ä»¶
 	char* ofs = 0;
 
 	ofstream fout(logfilename,ios::out);
-	int num = 0;
+	int num = 0;//ç”¨æ¥è®°å½•è½®æ•°ï¼Œå¡«æ»¡ä¸€ä¸ªitemæ•°ç»„ä¸ºä¸€è½®
 	while (reader < limit) {
 		// Collect items
-		//vector<Range> items;//itemÀï´æµÄÊÇÃ¿¸ötriple£¡Ã¿¸ötripleÕ¼ÓÃÒ»¸övectorÔªËØ£¬Òò´Ë¿ÉÒÔÖ±½Óµ÷ÓÃsort¶Ôµ¥¸ötriple½øĞĞÅÅĞò¡£ÕâÀïµÄvector´æµÄ¶«Î÷ÔÚÕ»Àï£¬¶øÇÒ¾­¹ı²âÊÔ£¬Ã²ËÆÔÚÃ»ÓĞ±àÒëÆ÷ÓÅ»¯µÄÇé¿öÏÂ£¬Ã¿Ò»ÂÖµÄvector¶¼²»»á±»»ØÊÕ£¬¼´Ê¹ºó±ßÃ»ÓĞÓÃµ½£¬¼´Ê¹³¬¹ıÁË±äÁ¿µÄÉúÃü·¶Î§
-		vector<Range>* items = new vector<Range>();//¸ÄÎªÁËÔÚ¶ÑÀïÉêÇë£¬²¢ÇÒ½øĞĞÁËÊÖ¶¯»ØÊÕ
+		//vector<Range> items;//itemé‡Œå­˜çš„æ˜¯æ¯ä¸ªtripleï¼æ¯ä¸ªtripleå ç”¨ä¸€ä¸ªvectorå…ƒç´ ï¼Œå› æ­¤å¯ä»¥ç›´æ¥è°ƒç”¨sortå¯¹å•ä¸ªtripleè¿›è¡Œæ’åºã€‚è¿™é‡Œçš„vectorå­˜çš„ä¸œè¥¿åœ¨æ ˆé‡Œï¼Œè€Œä¸”ç»è¿‡æµ‹è¯•ï¼Œè²Œä¼¼åœ¨æ²¡æœ‰ç¼–è¯‘å™¨ä¼˜åŒ–çš„æƒ…å†µä¸‹ï¼Œæ¯ä¸€è½®çš„vectoréƒ½ä¸ä¼šè¢«å›æ”¶ï¼Œå³ä½¿åè¾¹æ²¡æœ‰ç”¨åˆ°ï¼Œå³ä½¿è¶…è¿‡äº†å˜é‡çš„ç”Ÿå‘½èŒƒå›´
+		vector<Range>* items = new vector<Range>();//æ”¹ä¸ºäº†åœ¨å †é‡Œç”³è¯·ï¼Œå¹¶ä¸”è¿›è¡Œäº†æ‰‹åŠ¨å›æ”¶
 
 		const char* maxReader = reader + memoryLimit;
 		while (reader < limit) {
 			const char* start = reader;
 			reader = skip(reader);
+
+			//å¦‚æœrawfactæ–‡ä»¶ä¸å®Œæ•´ï¼Œé‚£ä¹ˆä¼šå‡ºç°è¿™é‡Œçš„æœ€åä¸€ä¸ªä¸‰å…ƒç»„ä¸å®Œæ•´ï¼Œé‚£ä¹ˆè¿™é‡ŒåŠ ä¸€ä¸ªå¿½ç•¥æœ€åä¸€ä¸ªä¸‰å…ƒç»„çš„è¯­å¥
+			if(reader>limit) break;
+
 			items->push_back(Range(start, reader));
 
 			// Memory Overflow?
@@ -105,20 +109,25 @@ void Sorter::sort(string logfilename, string filename, TempFile& out, const char
 		std::sort(items->begin(), items->end(), CompareSorter(compare));
 
 		// Did everything fit?
-		if ((reader == limit) && (runs.empty())) {//ÕâÀïµÄ´¥·¢£¬µ±ÇÒ½öµ±´«ÈëÎÄ¼ş´óĞ¡Ğ¡ÓÚmemoryLimitµÄ512MÊ±
-			spool(0, out, *items, eliminateDuplicates);//ÕâÀïµÄoutÊÇÍâ±ß´«½øÀ´µÄoutÔ´ÎÄ¼ş
-			fout << "Èç¹û¿´µ½ÕâÌõĞÅÏ¢±íÊ¾ÎÄ¼ş´óĞ¡Ã»ÓĞ³¬¹ımemoryLimitÏŞÖÆ" << endl;
+		if ((reader == limit) && (runs.empty())) {//è¿™é‡Œçš„è§¦å‘ï¼Œå½“ä¸”ä»…å½“ä¼ å…¥æ–‡ä»¶å¤§å°å°äºmemoryLimitçš„438Mæ—¶ï¼Œå¹¶ä¸”æ–‡ä»¶æ²¡æœ‰é—®é¢˜ï¼ˆæ•°æ®å®Œæ•´ï¼‰
+			spool(0, out, *items, eliminateDuplicates);//è¿™é‡Œçš„outæ˜¯å¤–è¾¹ä¼ è¿›æ¥çš„outæºæ–‡ä»¶
+			fout << "å¦‚æœçœ‹åˆ°è¿™æ¡ä¿¡æ¯è¡¨ç¤ºæ–‡ä»¶å¤§å°æ²¡æœ‰è¶…è¿‡memoryLimité™åˆ¶ï¼Œæ–‡ä»¶å®Œæ•´" << endl;
 			break;
-			//ÕâÀïbreakÖ®ºó£¬runsÀï±ßÎª¿Õ£¬²¢ÇÒitemsÀï´æÓĞËùÓĞÊı¾İ£¨Ã»ÓĞ·Ö¶Î£©£¬ÇÒÒÑÈ«²¿´æÈëoutÎÄ¼ş£¬×¢Òâ£ºintermediateÎÄ¼şÎª¿Õ£¡
+			//è¿™é‡Œbreakä¹‹åï¼Œrunsé‡Œè¾¹ä¸ºç©ºï¼Œå¹¶ä¸”itemsé‡Œå­˜æœ‰æ‰€æœ‰æ•°æ®ï¼ˆæ²¡æœ‰åˆ†æ®µï¼‰ï¼Œä¸”å·²å…¨éƒ¨å­˜å…¥outæ–‡ä»¶ï¼Œæ³¨æ„ï¼šintermediateæ–‡ä»¶ä¸ºç©ºï¼
+		}
+		if((runs.empty()) && (reader>limit)){//è¿™é‡Œçš„è§¦å‘ï¼Œè¡¨ç¤ºå½“ä¸”ä»…å½“ä¼ å…¥æ–‡ä»¶çš„å¤§å°å°äºmemoryLimitçš„438Mæ—¶ï¼Œå¹¶ä¸”æ–‡ä»¶æœ‰é—®é¢˜ï¼Œæœ€åä¸€ä¸ªtripleä¸å®Œæ•´
+			spool(0, out, *items, eliminateDuplicates);
+			fout << "å¦‚æœçœ‹åˆ°è¿™æ¡ä¿¡æ¯è¡¨ç¤ºæ–‡ä»¶å¤§å°æ²¡æœ‰è¶…è¿‡memoryLimité™åˆ¶ï¼Œä½†æ˜¯æ–‡ä»¶ä¸å®Œæ•´ï¼Œæœ€åä¸€ä¸ªtripleä¿¡æ¯ä¸å®Œæ•´ï¼" << endl;
+			break;
 		}
 
 		// No, spool to intermediate file
 		char* newOfs = spool(ofs, intermediate, *items, eliminateDuplicates);
 		runs.push_back(Range(ofs, newOfs));
 		ofs = newOfs;
-		//Èç¹ûÕâÀïµÄÑ­»·Õı³£½áÊø£¬runsÀï±ß´æÓĞËùÓĞÊı¾İµÄ·Ö¶ÎĞÅÏ¢£¬Õâ¸ö·Ö¶ÎĞÅÏ¢ÊÇÃ¿512MÒ»¸övectorÔªËØ
-		//itemÀïµÄÊı¾İ¶¼±»´æÈëµ½intermediateÕâ¸öÎÄ¼şÀï£¬×¢Òâ£ºoutÎÄ¼şÎª¿Õ£¡
-		//intermediateÎÄ¼şÀï´æµÄÊÇÅÅ¹ıĞòµÄ·Ö¶ÎĞÅÏ¢
+		//å¦‚æœè¿™é‡Œçš„å¾ªç¯æ­£å¸¸ç»“æŸï¼Œrunsé‡Œè¾¹å­˜æœ‰æ‰€æœ‰æ•°æ®çš„åˆ†æ®µä¿¡æ¯ï¼Œè¿™ä¸ªåˆ†æ®µä¿¡æ¯æ˜¯æ¯512Mä¸€ä¸ªvectorå…ƒç´ 
+		//itemé‡Œçš„æ•°æ®éƒ½è¢«å­˜å…¥åˆ°intermediateè¿™ä¸ªæ–‡ä»¶é‡Œï¼Œæ³¨æ„ï¼šoutæ–‡ä»¶ä¸ºç©ºï¼
+		//intermediateæ–‡ä»¶é‡Œå­˜çš„æ˜¯æ’è¿‡åºçš„åˆ†æ®µä¿¡æ¯
 		delete items;
 	}
 	intermediate.close();
@@ -129,20 +138,20 @@ void Sorter::sort(string logfilename, string filename, TempFile& out, const char
 	fout << "---------------------------------" << endl;
 
 	// Do we habe to merge runs?
-	if (!runs.empty()) {//runs²»Îª¿Õ£¬ËµÃ÷ÉÏ½×¶ÎµÄwhileÕı³£½áÊø£¬ËùÓĞ·Ö¶ÎÊı¾İ¶¼ÔÚintermediateÀï£¬outÎÄ¼şÎª¿Õ£¡Òò´ËÕâÀïµÄ·Ö¶ÎÊı¾İĞèÒª½øĞĞmerge
+	if (!runs.empty()) {//runsä¸ä¸ºç©ºï¼Œè¯´æ˜ä¸Šé˜¶æ®µçš„whileæ­£å¸¸ç»“æŸï¼Œæ‰€æœ‰åˆ†æ®µæ•°æ®éƒ½åœ¨intermediateé‡Œï¼Œoutæ–‡ä»¶ä¸ºç©ºï¼å› æ­¤è¿™é‡Œçš„åˆ†æ®µæ•°æ®éœ€è¦è¿›è¡Œmerge
 		// Map the ranges
-		MemoryMappedFile tempIn;//Ö¸ÏòintermediateÀïµÄ·Ö¶ÎÊı¾İ
+		MemoryMappedFile tempIn;//æŒ‡å‘intermediateé‡Œçš„åˆ†æ®µæ•°æ®
 		assert(tempIn.open(intermediate.getFile().c_str()));
 		for (vector<Range>::iterator iter = runs.begin(), limit = runs.end(); iter != limit; ++iter) {
-			//ÕâÀïÔÙ´Î¸³ÖµrunsÀï±ßµÄ·Ö¶ÎÊı¾İ¶¨Î»ĞÅÏ¢£¬¸Ğ¾õÃ»ÓĞ±ØÒª£¬ÒòÎªÔÚÉÏÒ»¸öwhileÑ­»·ÀïÒÑ¾­¸³Öµ¹ıÁË
-			//ÓĞ±ØÒª£¬ÒòÎªÉÏ¸öÑ­»·£¬runsÀï±ß´æµÄÊÇTempFileµÄ·Ö¶Î¶¨Î»ĞÅÏ¢£¬ÏÖÔÚÒª¸Ä³ÉMemoryMappedFileµÄ·Ö¶Î¶¨Î»ĞÅÏ¢
+			//è¿™é‡Œå†æ¬¡èµ‹å€¼runsé‡Œè¾¹çš„åˆ†æ®µæ•°æ®å®šä½ä¿¡æ¯ï¼Œæ„Ÿè§‰æ²¡æœ‰å¿…è¦ï¼Œå› ä¸ºåœ¨ä¸Šä¸€ä¸ªwhileå¾ªç¯é‡Œå·²ç»èµ‹å€¼è¿‡äº†
+			//æœ‰å¿…è¦ï¼Œå› ä¸ºä¸Šä¸ªå¾ªç¯ï¼Œrunsé‡Œè¾¹å­˜çš„æ˜¯TempFileçš„åˆ†æ®µå®šä½ä¿¡æ¯ï¼Œç°åœ¨è¦æ”¹æˆMemoryMappedFileçš„åˆ†æ®µå®šä½ä¿¡æ¯
 			(*iter).from = tempIn.getBegin() + ((*iter).from - static_cast<char*> (0));
 			(*iter).to = tempIn.getBegin() + ((*iter).to - static_cast<char*> (0));
 		}
 
-		// Sort the run heads£¬×¢Òâ£¡Ö»ÊÇhead£¡
+		// Sort the run headsï¼Œæ³¨æ„ï¼åªæ˜¯headï¼
 		std::sort(runs.begin(), runs.end(), CompareSorter(compare));
-		//°´rangeµÄfromÅÅĞòrunsÀï±ßµÄrangeÔªËØ
+		//æŒ‰rangeçš„fromæ’åºrunsé‡Œè¾¹çš„rangeå…ƒç´ 
 
 		fout << "runs.size = " << runs.size() << endl;
 		if(runs.size()<10000){
@@ -161,7 +170,7 @@ void Sorter::sort(string logfilename, string filename, TempFile& out, const char
 		Range last(0, 0);
 		while (!runs.empty()) {
 			// Write the first entry if no duplicate
-			Range head(runs.front().from, skip(runs.front().from));//Ò»¸ötriple
+			Range head(runs.front().from, skip(runs.front().from));//ä¸€ä¸ªtriple
 			if ((!eliminateDuplicates) || (!last.equals(head)))
 				out.write(head.to - head.from, head.from);
 			last = head;
@@ -175,7 +184,7 @@ void Sorter::sort(string logfilename, string filename, TempFile& out, const char
 			// Check the heap condition
 			unsigned pos = 0, size = runs.size();
 			while (pos < size) {
-				unsigned left = 2 * pos + 1, right = left + 1;//ÄÑµÀÕâ¸öleftºÍrightÓĞ³¬ÏŞ£¿³¬ÏŞµÄ»°ËµÃ÷ÎÒ×îÇ°±ßµÄmemoryLimit=512MµÄ·Ö¶Î±ê×¼²»¶Ô£¿ÄÇÕâÑùµÄ»°runsÒ²¼«ÓĞ¿ÉÄÜ³¬¹ıSTLµÄÏŞÖÆ°¡£¡ËùÒÔÎÒ±ØĞë²âÊÔÈ·¶¨·Ö¶Î±ê×¼µ½µ×ÊÇ¶à´ó£¡//¾­¹ı²âÊÔ£¬Õâ¸ö·Ö¶Î±ê×¼·Ç³£´ó£¬²î²»¶à438M·ÖÒ»¶Î£¬²»¿ÉÄÜ³öÏÖrun.sizeµÄ·¶Î§´óÓÚunsighedµÄ±íÊ¾·¶Î§£¬ËäÈ»¸ú512M²»Ò»Ñù£¬µ«²îµÄ²»¶à
+				unsigned left = 2 * pos + 1, right = left + 1;//éš¾é“è¿™ä¸ªleftå’Œrightæœ‰è¶…é™ï¼Ÿè¶…é™çš„è¯è¯´æ˜æˆ‘æœ€å‰è¾¹çš„memoryLimit=512Mçš„åˆ†æ®µæ ‡å‡†ä¸å¯¹ï¼Ÿé‚£è¿™æ ·çš„è¯runsä¹Ÿææœ‰å¯èƒ½è¶…è¿‡STLçš„é™åˆ¶å•Šï¼æ‰€ä»¥æˆ‘å¿…é¡»æµ‹è¯•ç¡®å®šåˆ†æ®µæ ‡å‡†åˆ°åº•æ˜¯å¤šå¤§ï¼//ç»è¿‡æµ‹è¯•ï¼Œè¿™ä¸ªåˆ†æ®µæ ‡å‡†éå¸¸å¤§ï¼Œå·®ä¸å¤š438Måˆ†ä¸€æ®µï¼Œä¸å¯èƒ½å‡ºç°run.sizeçš„èŒƒå›´å¤§äºunsighedçš„è¡¨ç¤ºèŒƒå›´ï¼Œè™½ç„¶è·Ÿ512Mä¸ä¸€æ ·ï¼Œä½†å·®çš„ä¸å¤š
 				if (left >= size)
 					break;
 				if (right < size) {

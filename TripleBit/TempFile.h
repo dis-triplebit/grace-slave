@@ -37,7 +37,7 @@ private:
 public:
 	/// Constructor
 	TempFile(const std::string& baseName);
-	TempFile(const std::string& baseName,const std::_Ios_Openmode app);//以给定方式打开
+	TempFile(const std::string& baseName,const std::_Ios_Openmode app);//以给定方式打开，并且没有后缀
     /// Destructor
 	~TempFile();
 
