@@ -1112,7 +1112,7 @@ Status TwoConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 		writer = indexBuffer->get_address();
 	} else {
 		size_t size = indexBuffer->getSize();
-		indexBuffer->resize(indexPos * sizeof(Triple) + 2 * sizeof(unsigned));
+		indexBuffer->resize(indexPos * sizeof(Triple) + 2 * sizeof(unsigned long long));
 		writer = indexBuffer->get_address() + size;
 	}
 

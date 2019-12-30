@@ -338,14 +338,14 @@ unsigned HashIndex::next(ID id)
 
 char* writeData(char* writer, unsigned long long data)
 {
-	memcpy(writer, &data, 4);
-	return writer+4;
+	memcpy(writer, &data, sizeof(data));
+	return writer+ sizeof(data);
 }
 
 const char* readData(const char* reader, unsigned long long& data)
 {
-	memcpy(&data, reader, 4);
-	return reader+4;
+	memcpy(&data, reader, sizeof(data));
+	return reader+ sizeof(data);
 }
 
 void HashIndex::save(MMapBuffer*& buffer)
