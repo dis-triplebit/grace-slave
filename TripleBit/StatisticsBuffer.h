@@ -108,8 +108,8 @@ private:
 	unsigned long long currentChunkNo;//没有被用到过
 	unsigned long long indexPos, indexSize;
 
-	Triple* pos, *posLimit;
-	Triple triples[3 * 4096];//里边的东西是在查询的时候进行填充的，并且内容很少,存的就是统计信息，不是索引
+	TripleIndex* pos, *posLimit;
+	TripleIndex triples[3 * 4096];//里边的东西是在查询的时候进行填充的，并且内容很少,存的就是统计信息，不是索引
 	bool first;
 public:
 	TwoConstantStatisticsBuffer(const string path, StatisticsType type);

@@ -621,7 +621,7 @@ const uchar* TwoConstantStatisticsBuffer::decode(const uchar* begin, const uchar
 	unsigned value1 = readDelta4(begin); begin += 4;
 	unsigned value2 = readDelta4(begin); begin += 4;
 	unsigned count = readDelta4(begin); begin += 4;
-	Triple* writer = &triples[0];
+	TripleIndex* writer = &triples[0];
 	(*writer).value1 = value1;
 	(*writer).value2 = value2;
 	(*writer).count = count;
@@ -789,7 +789,7 @@ const uchar* TwoConstantStatisticsBuffer::decodeIdAndPredicate(const uchar* begi
 	unsigned value1 = readDelta4(begin); begin += 4;
 	unsigned value2 = readDelta4(begin); begin += 4;
 	unsigned count = readDelta4(begin); begin += 4;
-	Triple* writer = &triples[0];
+	TripleIndex* writer = &triples[0];
 	(*writer).value1 = value1;
 	(*writer).value2 = value2;
 	(*writer).count = count;
@@ -1036,16 +1036,14 @@ int TwoConstantStatisticsBuffer::findPredicate(unsigned value1,Triple*pos,Triple
 
 Status TwoConstantStatisticsBuffer::getStatis(unsigned& v1, unsigned v2)
 {
-	TripleIndex* postemp;
-	TripleIndex* posLimittemp;
-	postemp = index, posLimittemp = index + indexPos;
+	pos = index, posLimit = index + indexPos;
 	find(v1, v2);
-	if(::greater(postemp->value1, postemp->value2, v1, v2))
-		postemp--;
+	if(::greater(pos->value1, pos->value2, v1, v2))
+		pos--;
 
-	unsigned long long start = postemp->count; postemp++;
-	unsigned long long end = postemp->count;
-	if(postemp == (index + indexPos))
+	unsigned long long start = pos->count; pos++;
+	unsigned long long end = pos->count;
+	if(pos == (index + indexPos))
 		end = usedSpace;
 
 	const unsigned char* begin = (uchar*)buffer->getBuffer() + start, *limit = (uchar*)buffer->getBuffer() + end;
