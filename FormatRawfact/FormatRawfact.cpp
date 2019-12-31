@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 		outFile << "<" << s << ">" << " "
 			<< "<" << p << ">" << " "
 			<< "\"" << o << "\"" << " ." << endl;
-		if (i > 10000) break;
+		//if (i > 10000) break;//小文件不需要这一行！
 	}
 	outFile.close();
 	
