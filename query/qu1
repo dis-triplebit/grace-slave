@@ -1,1 +1,1 @@
-select ?x ?y where{ ?x ?y 222 . }
+select ?x where{ ?x 14 222 . }

@@ -27,7 +27,7 @@ public:
 	size_t get_length() { return size;}
 	char * get_address() const { return (char*)mmap_addr; }
 
-	virtual Status resize(unsigned long	long new_size,bool clear);
+	virtual Status resize(size_t new_size,bool clear);
 	virtual void   memset(char value);
 
 	MMapBuffer(const char* filename, size_t initSize);
