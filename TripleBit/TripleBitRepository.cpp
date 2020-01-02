@@ -272,21 +272,25 @@ bool TripleBitRepository::lookup(const string& str, ID& id) {
 	// return true;
 }
 int TripleBitRepository::get_object_count(ID objectID) {
+	return 666;
 	((OneConstantStatisticsBuffer*) objectStat)->getStatis(objectID);
 	return objectID;
 }
 
 int TripleBitRepository::get_subject_count(ID subjectID) {
+	return 666;
 	((OneConstantStatisticsBuffer*) subjectStat)->getStatis(subjectID);
 	return subjectID;
 }
 
 int TripleBitRepository::get_subject_predicate_count(ID subjectID, ID predicateID) {
+	return 666;
 	subPredicateStat->getStatis(subjectID, predicateID);
 	return subjectID;
 }
 
 int TripleBitRepository::get_object_predicate_count(ID objectID, ID predicateID) {
+	return 666;
 	objPredicateStat->getStatis(objectID, predicateID);
 	return objectID;
 }

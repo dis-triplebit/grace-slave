@@ -473,7 +473,6 @@ static bool transformSubquery(IRepository& repo,const SPARQLParser::PatternGroup
         // Encode the a triple pattern
         //TripleBitQueryGraph::TripleNode tripleNode;
         if(!encodeTripleNode(repo,(*iter),tripleNode)) return false;
-
         if(tripleNode.constPredicate == SPARQLParser::Element::Variable){
             //如果谓词未知
             output.joinType = TripleBitQueryGraph::UNION;//并集
@@ -622,7 +621,6 @@ static bool transformQuery(IRepository& repo,const SPARQLParser& input, TripleBi
 		 output.markAsKnownEmpty();
 		 return true;
 	}
-
 	// Compute the subquery edges(always the graph pattern ,option pattern,filter pattern join edges)
 	output.constructSubqueryEdges();
 
