@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	if (argc != 3) {
 		fprintf(stderr, "Usage: %s <rawFact> <FormatType>\n" \
 			"FormatType : 0 -> rawfact to id triples file\n" \
-			"FormatType : 1 -> id triples file to rawfact", argv[0]);
+			"FormatType : 1 -> id triples file to rawfact\n", argv[0]);
 		return -1;
 	}
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		string filename(argv[1]);
 		TempFile rawFact(filename + ".rawfact", ios::trunc);
 		ID s, p, o;
-		cout << filename << " to rawfact :" << filename << ".rawfact" << endl;
+		cout << filename << " to rawfact : " << filename << ".rawfact" << endl;
 		std::ifstream in(filename);
 		std::string str;
 		while(getline(in,str)){
