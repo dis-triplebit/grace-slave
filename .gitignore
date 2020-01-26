@@ -8,3 +8,6 @@ bin/
 *.ff
 *.rawfact
 database/
+objectSortingSystemInfo.txt
+resolvingSystemInfo.txt
+subjectSortingSystemInfo.txt

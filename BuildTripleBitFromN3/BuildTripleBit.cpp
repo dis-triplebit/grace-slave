@@ -10,11 +10,9 @@
 #include "BitmapBuffer.h"
 #include "MMapBuffer.h"
 
-
-static TempFile rawFacts("./test");
-
 void parserTriplesFile(string fileName, TripleBitBuilder* builder)
 {
+	TempFile rawFacts("./test");
    	std::ifstream  in(fileName);
 	std::string str;
 	//in.open(fileName);
@@ -36,7 +34,7 @@ void parserTriplesFile(string fileName, TripleBitBuilder* builder)
 			builder-> NTriplesParse((char*)subject.c_str(), (char*)predicate.c_str(), 
 				(char*)object.c_str(), rawFacts);
 	}
-
+	rawFacts.close();
 }
 
 char* DATABASE_PATH;
