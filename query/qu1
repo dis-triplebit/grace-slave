@@ -1,1 +1,1 @@
-select ?x where{ ?x 14 4721 .}
+select ?x where{ ?x 2 543 .}

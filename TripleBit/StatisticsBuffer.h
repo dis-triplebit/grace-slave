@@ -42,12 +42,12 @@ public:
 
 private:
 	StatisticsType type;
-	MMapBuffer* buffer;
+	MMapBuffer* buffer;//buffer指向块索引，对应database里的那4个文件
 	const unsigned char* reader;
-	unsigned char* writer;
+	unsigned char* writer;//全局的writer指向buffer的末尾元素（块索引）
 
 	/// index for query;
-	vector<ID> index;
+	vector<unsigned long long> index;//index里存的是buffer的指针偏移量
 	unsigned long long indexSize;
 	unsigned nextHashValue;
 	unsigned lastId;
@@ -55,7 +55,8 @@ private:
 
 	const unsigned ID_HASH;
 
-	Triple* triples, *pos, *posLimit;
+	Triple* triples;//这个triples在数据导入过程中没有用，在查询时候用来存需要的临时信息（仅在decode的过程中有写入，填充的是解压缩之后的数据，这些数据在find的时候要用到，并且pos和posLimit指向他们）
+	Triple *pos, * posLimit;
 	bool first;
 public:
 	OneConstantStatisticsBuffer(const string path, StatisticsType type);
@@ -69,11 +70,13 @@ public:
 	size_t getEntityCount();//除了输出调试信息，没有被用到过
 private:
 	/// write a id to buffer; isID indicate the id really is a ID, maybe is a count.
+	///没有被调用过
 	void writeId(unsigned id, char*& ptr, bool isID);
 	/// read a id from buffer;
 	const char* readId(unsigned& id, const char* ptr, bool isID);//没有用到
 	/// judge the buffer is full;
 	bool isPtrFull(unsigned len);
+
 	/// get the value length in bytes;
 	unsigned getLen(unsigned v);
 
@@ -100,6 +103,7 @@ private:
 	MMapBuffer* buffer;
 	const unsigned char* reader;
 	unsigned char* writer;
+	//同样，buffer里存的是块索引，writer指向块索引的末尾
 
 	TripleIndex* index;//index里存的可能只是偏移数据，并不是真正的源数据，源数据在buffer里边，reader指向
 	
@@ -108,8 +112,9 @@ private:
 	unsigned long long currentChunkNo;//没有被用到过
 	unsigned long long indexPos, indexSize;
 
-	TripleIndex* pos, *posLimit;
-	TripleIndex triples[3 * 4096];//里边的东西是在查询的时候进行填充的，并且内容很少,存的就是统计信息，不是索引
+	Triple* pos, *posLimit;
+	TripleIndex* posForIndex, * posLimitForIndex;
+	Triple* triples;//里边的东西是在查询的时候进行填充的，并且内容很少,存的就是统计信息，不是索引，是在decode之后填充的，填充的是解压缩之后的数据，这些数据在find的时候要用到，并且pos和posLimit指向他们
 	bool first;
 public:
 	TwoConstantStatisticsBuffer(const string path, StatisticsType type);
@@ -133,6 +138,7 @@ private:
 	const uchar* decodeIdAndPredicate(const uchar* begin, const uchar* end);//没有被用到过
 	///
 	bool find(unsigned value1, unsigned value2);
+	bool findForIndex(unsigned value1, unsigned value2);
 	int findPredicate(unsigned,Triple*,Triple*);
 	///
 	bool find_last(unsigned value1, unsigned value2);//没有被用到过
