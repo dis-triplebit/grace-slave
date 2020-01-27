@@ -1173,7 +1173,7 @@ Status TwoConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 	//同OneConstantStatisticsBuffer.save一样，这里只对统计偏移索引进行磁盘存储，不需要管块索引，因为块索引是mmap机制
 	char* writer;//同OneConstantStatisticsBuffer.save一样，这里的writer也不是类成员变量，指的是统计偏移索引内容
 	if(indexBuffer == NULL) {
-		indexBuffer = MMapBuffer::create(string(string(DATABASE_PATH) + "/statIndex").c_str(), indexPos * sizeof(TripleIndex) + 2 * sizeof(unsigned));
+		indexBuffer = MMapBuffer::create(string(string(DATABASE_PATH) + "/statIndex").c_str(), indexPos*sizeof(TripleIndex) + 2*sizeof(unsigned long long));
 		writer = indexBuffer->get_address();
 	} else {
 		size_t size = indexBuffer->getSize();
