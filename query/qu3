@@ -1,0 +1,1 @@
+select ?x ?y where{ ?x ?y 4 .}
