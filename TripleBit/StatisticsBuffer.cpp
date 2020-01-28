@@ -488,6 +488,12 @@ Status OneConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 		indexBuffer->resize((index.size() + 2) * 4);
 		writer = indexBuffer->get_address() + size;
 	}
+	cout << "↓" << endl;
+	cout << index.size() << "\t" << usedSpace << endl;
+	for (int i = 0; i < index.size();i++) {
+		cout << i << " -> " << index[i] << endl;
+	}
+	cout << "↑" << endl;
 	writer = writeData8byte(writer, usedSpace);
 	writer = writeData8byte(writer, index.size());//indexSize==index.size()
 	//这个writer指向index文件（MMapBuffer）
@@ -510,9 +516,7 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 	unsigned long long size;
 	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->usedSpace);
 	indexBuffer = (char*)readData8byte(indexBuffer, size);
-
 	statBuffer->index.resize(0);
-
 	statBuffer->indexSize = size;
 
 	unsigned long long first;
@@ -521,6 +525,13 @@ OneConstantStatisticsBuffer* OneConstantStatisticsBuffer::load(StatisticsType ty
 		indexBuffer = (char*)readData8byte(indexBuffer, first);
 		statBuffer->index.push_back(first);
 	}
+
+	cout << "↓" << endl;
+	cout << size << "\t" << statBuffer->usedSpace << endl;
+	for (int i = 0; i < size;i++) {
+		cout << i << " -> " << statBuffer->index[i] << endl;
+	}
+	cout << "↑" << endl;
 
 	return statBuffer;
 }
@@ -1180,6 +1191,12 @@ Status TwoConstantStatisticsBuffer::save(MMapBuffer*& indexBuffer)
 		indexBuffer->resize(indexPos * sizeof(TripleIndex) + 2 * sizeof(unsigned long long));
 		writer = indexBuffer->get_address() + size;
 	}
+	cout << "↓" << endl;
+	cout << indexPos << "\t" << usedSpace << endl;
+	for (int i = 0; i < indexPos;i++) {
+		cout << (index + i)->value1 << "\t" << (index + i)->value2 << "\t" << (index + i)->count << endl;
+	}
+	cout << "↑" << endl;
 
 	writer = writeData8byte(writer, usedSpace);
 	writer = writeData8byte(writer, indexPos);
@@ -1204,12 +1221,20 @@ TwoConstantStatisticsBuffer* TwoConstantStatisticsBuffer::load(StatisticsType ty
 	//这里用mmap存取，在构造函数里
 	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->usedSpace);
 	indexBuffer = (char*)readData8byte(indexBuffer, statBuffer->indexPos);
+	
 #ifdef DEBUG
 	cout<<__FUNCTION__<<"indexPos: "<<statBuffer->indexPos<<endl;
 #endif
 	// load index;
 	statBuffer->index = (TripleIndex*)indexBuffer;
 	indexBuffer = indexBuffer + statBuffer->indexPos * sizeof(TripleIndex);
+	
+	cout << "↓" << endl;
+	cout << statBuffer->indexPos << "\t" << statBuffer->usedSpace << endl;
+	for (int i = 0; i < statBuffer->indexPos;i++) {
+		cout << statBuffer->index[i].value1 << "\t" << statBuffer->index[i].value2 << "\t" << statBuffer->index[i].count << endl;
+	}
+	cout << "↑" << endl;
 
 #ifdef DEBUG
 	for(int i = 0; i < 3; i++)
