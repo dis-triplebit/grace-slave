@@ -342,7 +342,7 @@ char* writeData(char* writer, unsigned data)
 	return writer+ 4;
 }
 
-const char* readData(const char* reader, unsigned& data)
+char* readData(char* reader, unsigned& data)
 {
 	memcpy(&data, reader, 4);
 	return reader+ 4;
