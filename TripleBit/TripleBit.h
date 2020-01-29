@@ -60,8 +60,8 @@ const unsigned int COLUMN_BUFFER_INIT_PAGE_COUNT = 2;
 const unsigned int COLUMN_BUFFER_INCREMENT_PAGE_COUNT = 2;
 
 //URI statistics buffer settings
-const unsigned int STATISTICS_BUFFER_INIT_PAGE_COUNT = 256;
-const unsigned int STATISTICS_BUFFER_INCREMENT_PAGE_COUNT = 256;
+const unsigned int STATISTICS_BUFFER_INIT_PAGE_COUNT = 1;
+const unsigned int STATISTICS_BUFFER_INCREMENT_PAGE_COUNT = 1;
 
 //entity buffer settings
 const unsigned int ENTITY_BUFFER_INIT_PAGE_COUNT = 1;
