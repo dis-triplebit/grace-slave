@@ -1424,7 +1424,7 @@ Status TripleBitWorkerQuery::centerJoin(){
 					} else
 						cout << "not found" << endl;
 				}
-				cout << endl;
+				//cout << endl;
 			}
 		} 
 
@@ -1703,7 +1703,7 @@ Status TripleBitWorkerQuery::linerJoin(){
 						cout << "not found" << endl;
 					}
 				}
-				cout << endl;
+				//cout << endl;
 			}
 		} else {
 			EntityIDBuffer* buf = bufferlist[0];
