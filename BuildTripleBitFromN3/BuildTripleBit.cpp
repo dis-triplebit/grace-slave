@@ -11,10 +11,9 @@
 #include "MMapBuffer.h"
 
 
-static TempFile rawFacts("./test");
-
 void parserTriplesFile(string fileName, TripleBitBuilder* builder)
 {
+	TempFile rawFacts("./test");
    	std::ifstream  in(fileName);
 	std::string str;
 	//in.open(fileName);
