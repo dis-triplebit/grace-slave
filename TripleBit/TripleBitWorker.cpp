@@ -114,11 +114,13 @@ Status TripleBitWorker::Execute(string& queryString) {
 
 		cout << "---------------After transform----------------" << endl;
 		Print();
-		planGen->generatePlan(*queryGraph);
+		Status s = planGen->generatePlan(*queryGraph);
 		cout << "---------------After GeneratePlan-------------" << endl;
 		Print();
 		
-		workerQuery->query(queryGraph, resultSet, trans->transTime);
+		if(s != NULL_RESULT){
+			workerQuery->query(queryGraph, resultSet, trans->transTime);
+		}
 
 #ifdef TOTAL_TIME
 		gettimeofday(&end, NULL);

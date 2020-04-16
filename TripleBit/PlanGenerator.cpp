@@ -74,17 +74,19 @@ Status PlanGenerator::generatePlan(TripleBitQueryGraph& _graph)
 
 	//cout<<"xxxxxxxxxxxxxxxxxxx begin of fliter!"<<endl;
 	for(vector<TripleNode>::iterator iter = query->tripleNodes.begin(); iter != query->tripleNodes.end(); ) {
-		
+		int selectivity=getSelectivity(iter->tripleNodeID);
 		//cout<< "Pattern size: " << query->tripleNodes.size()<<endl;
 		//if(getSelectivity(iter->tripleNodeID) == 0)
 		//	iter = query->tripleNodes.erase(iter);			
 		
 		
 #ifdef DEBUGPLAN
-		cout << "TripleNodeID: " << iter->tripleNodeID << " Selectivity: " << getSelectivity(iter->tripleNodeID) << endl;
+		cout << "TripleNodeID: " << iter->tripleNodeID << " Selectivity: " << selectivity << endl;
 #endif	
 		iter++;
-				
+		if(selectivity==0){
+			return NULL_RESULT;
+		}
 	}
 
 	//cout<<"xxxxxxxxxxxxxxxxxxx end of fliter!"<<endl;
