@@ -56,7 +56,13 @@ void TripleBitWorker::Work() {
 		}
 		
 		Execute(queryString);
-		cout << "Back from TripleBitWorker::Work execute(quertString)" << endl;
+		cout << "Back from TripleBitWorker::Work execute( " << queryString << " )" << endl;
+		cout << "result:" << endl;
+		tripleBitRepo->getResultSet(resultSet);
+		for(auto a:resultSet){
+			cout << a << " ";
+		}
+		cout<<endl;
 		/*
 		tripleBitRepo->ttForResult->completeOneTriple();
 		cout<<"After ttForResult mark a query"<<endl;

@@ -20,8 +20,12 @@ public:
     }
 
     bool insert(ID id){
-         bits[id-base] = true;
-         return true;
+        if (id < base || id > base + bits.size() - 1) {
+            cout << "illegal insert id = " << id << "   bits.size() = " << bits.size() << endl;
+            return false;
+        }
+		bits[id - base] = true;
+		return true;
     }
 
     bool get(ID id){
