@@ -56,7 +56,13 @@ void TripleBitWorker::Work() {
 		}
 		
 		Execute(queryString);
-		cout << "Back from TripleBitWorker::Work execute(quertString)" << endl;
+		cout << "Back from TripleBitWorker::Work execute( " << queryString << " )" << endl;
+		cout << "result:" << endl;
+		tripleBitRepo->getResultSet(resultSet);
+		for(auto a:resultSet){
+			cout << a << " ";
+		}
+		cout<<endl;
 		/*
 		tripleBitRepo->ttForResult->completeOneTriple();
 		cout<<"After ttForResult mark a query"<<endl;
@@ -114,11 +120,13 @@ Status TripleBitWorker::Execute(string& queryString) {
 
 		cout << "---------------After transform----------------" << endl;
 		Print();
-		planGen->generatePlan(*queryGraph);
+		Status s = planGen->generatePlan(*queryGraph);
 		cout << "---------------After GeneratePlan-------------" << endl;
 		Print();
 		
-		workerQuery->query(queryGraph, resultSet, trans->transTime);
+		if(s != NULL_RESULT){
+			workerQuery->query(queryGraph, resultSet, trans->transTime);
+		}
 
 #ifdef TOTAL_TIME
 		gettimeofday(&end, NULL);
