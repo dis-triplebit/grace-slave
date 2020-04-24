@@ -57,12 +57,12 @@ void TripleBitWorker::Work() {
 		
 		Execute(queryString);
 		cout << "Back from TripleBitWorker::Work execute( " << queryString << " )" << endl;
-		cout << "result:" << endl;
+		//cout << "result:" << endl;
 		tripleBitRepo->getResultSet(resultSet);
-		for(auto a:resultSet){
-			cout << a << " ";
-		}
-		cout<<endl;
+		// for(auto a:resultSet){
+		// 	cout << a << " ";
+		// }
+		// cout<<endl;
 		cout<<"resultSet.size() = "<<resultSet.size()<<endl;
 		/*
 		tripleBitRepo->ttForResult->completeOneTriple();
