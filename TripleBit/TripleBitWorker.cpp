@@ -63,6 +63,7 @@ void TripleBitWorker::Work() {
 			cout << a << " ";
 		}
 		cout<<endl;
+		cout<<"resultSet.size() = "<<resultSet.size()<<endl;
 		/*
 		tripleBitRepo->ttForResult->completeOneTriple();
 		cout<<"After ttForResult mark a query"<<endl;
