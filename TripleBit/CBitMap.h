@@ -21,7 +21,7 @@ public:
 
     bool insert(ID id){
         if (id < base || id > base + bits.size() - 1) {
-            cout << "illegal insert id = " << id << "   bits.size() = " << bits.size() << endl;
+            //cout << "illegal insert id = " << id << "   bits.size() = " << bits.size() << endl;
             return false;
         }
 		bits[id - base] = true;

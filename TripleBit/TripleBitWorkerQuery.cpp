@@ -1422,7 +1422,7 @@ Status TripleBitWorkerQuery::centerJoin(){
 						resultPtr->push_back(ids[i * IDCount + resultPos[j]]);
 #endif
 					} else
-						cout << "not found" << endl;
+						//cout << "not found" << endl;
 				}
 				//cout << endl;
 			}
@@ -1700,7 +1700,7 @@ Status TripleBitWorkerQuery::linerJoin(){
 						resultPtr->push_back(ids[i * IDCount + resultPos[j]]);
 #endif
 					} else {
-						cout << "not found" << endl;
+						//cout << "not found" << endl;
 					}
 				}
 				//cout << endl;
