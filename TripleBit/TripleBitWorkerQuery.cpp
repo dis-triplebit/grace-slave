@@ -1421,8 +1421,9 @@ Status TripleBitWorkerQuery::centerJoin(){
 #else
 						resultPtr->push_back(ids[i * IDCount + resultPos[j]]);
 #endif
-					} else
+					} else{
 						//cout << "not found" << endl;
+					}
 				}
 				//cout << endl;
 			}
